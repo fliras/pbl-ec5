@@ -61,7 +61,7 @@ DateTime timestampAtual;
 DHT dht(SENSOR_TEMPERATURA_UMIDADE, DHTTYPE);
 
 // Valores a serem medidos pelos sensores
-float temperatura = 0.0;
+int temperatura = 0.0;
 unsigned int umidade = 0;
 unsigned int luminosidade = 0;
 
@@ -102,6 +102,9 @@ bool temperaturaForaLimite(float temperaturaMedida);
 bool umidadeForaLimite(float umidadeMedida);
 bool luminosidadeForaLimite(unsigned int luminosidadeMedida);
 
+String parametroMostradoNoDisplay[] = { "Temp", "Lumi", "Umid" };
+short idParametroDisplay = 0;
+
 String montarStringTimeStamp(DateTime dataHora); // monta string do timestamp para uso em alguma saída visual
 
 void acionaBuzzer(); // aciona o buzzer em som contínuo
@@ -141,6 +144,37 @@ void limparRegistrosFalhaEEPROM(); //deixa todos os bytes da memória EEPROM em 
 
 //Configurações do sistema
 Configuracoes config = resgataConfiguracoesNaEEPROM();
+
+
+
+
+//Dados de menu
+/*
+1) Definir o range do sensor LDR (ausência de luz e luminosidade total)
+2) Definir limites de temperatura, umidade e luminosidade com os quais a placa irá trabalhar
+3) ativar/desativar alertas sonoros
+4) exibir registros de anormalidade
+*/
+enum MENU_STATE{
+  MAIN,
+  SETLDR,
+  SETSOUND,
+  SETTEMPMAX,
+  SETTEMPMIN,
+  SETHUMIMAX,
+  SETHUMIMIN,
+  SETLUMIMAX,
+  SETLUMIMIN,
+  GETREGISTRY
+  };
+
+enum BUTTON_TYPE{BUTTON_LEFT,BUTTON_MIDDLE,BUTTON_RIGHT};
+//LEFT    -> butao da esquerda( Escape )
+//MIDDLE  -> Butao do meio    (   <-   )
+//RIGHT   -> Butao da direita (   ->   )
+
+MENU_STATE current_menu = SETLDR;//O menu atual
+int main_menu_index = 05;//A opção selecionada quando estamo no menu principal.
 
 byte iconeWeathino1[] = {
   B00000, B10000, B11000, B11000,
@@ -202,9 +236,9 @@ void setup() {
 
 void loop() {
 
-  atualizarMedidas();
-
   timestampAtual = rtc.now();
+  atualizarMedidas();
+  atualizaMedidasNoDisplay();
 
   int offsetSeconds = config.fusoHorario * 3600; // pega as horas em seegundos
   timestampAtual = timestampAtual.unixtime() + offsetSeconds; // Adicionando o deslocamento ao tempo atual
@@ -246,6 +280,28 @@ void loop() {
   delay(2000);
 }
 
+void atualizaMedidasNoDisplay() {
+  String dados = padRight(" " + String(temperatura) + "C", 4) + "  " +
+    padLeft(String(umidade) + "%", 4) + " " +
+    padLeft(String(luminosidade) + "%", 4);
+
+  exibeTextoNoLCD(" TEMP UMID LUMI", dados);
+}
+
+String padLeft(String texto, int tamanho) {
+  String novaString = texto;
+  while (novaString.length() < tamanho)
+    novaString = " " + novaString;
+  return novaString;
+}
+
+String padRight(String texto, int tamanho) {
+  String novaString = texto;
+  while (novaString.length() < tamanho)
+    novaString = novaString + " ";
+  return novaString;
+}
+
 bool valorEstaIrregular(bool temperaturaIrregular, bool umidadeIrregular, bool luminosidadeIrregular){
   if(temperaturaIrregular || umidadeIrregular || luminosidadeIrregular)
     return true;
@@ -271,16 +327,29 @@ bool luminosidadeForaLimite(unsigned int luminosidadeMedida){
 }
 
 String montarStringTimeStamp(DateTime dataHora){
+  return montaStringData(dataHora) + " " + montaStringHora(dataHora);
+}
+
+String montaStringData(DateTime dataHora) {
   String dia = "";
   String mes = "";
-  String hora = "";
-  String minuto = "";
-  String segundo = "";
 
   if(dataHora.day() < 10)
     dia = String(dia + String(0));
   if(dataHora.month() < 10)
     mes = String(mes + String(0));
+
+  dia = String(dia + String(dataHora.day()));
+  mes = String(mes + String(dataHora.month()));
+
+  return String(dia + "/" + mes + "/" + String(dataHora.year()));
+}
+
+String montaStringHora(DateTime dataHora) {
+  String hora = "";
+  String minuto = "";
+  String segundo = "";
+
   if(dataHora.hour() < 10)
     hora = String(hora + String(0));
   if(dataHora.minute() < 10)
@@ -288,16 +357,11 @@ String montarStringTimeStamp(DateTime dataHora){
   if(dataHora.second() < 10)
     segundo = String(segundo + String(0));
 
-    dia = String(dia + String(dataHora.day()));
-    mes = String(mes + String(dataHora.month()));
-    hora = String(hora + String(dataHora.hour()));
-    minuto = String(minuto + String(dataHora.minute()));
-    segundo = String(segundo + String(dataHora.second()));
+  hora = String(hora + String(dataHora.hour()));
+  minuto = String(minuto + String(dataHora.minute()));
+  segundo = String(segundo + String(dataHora.second()));
 
-    
-  return String(dia + "-" + mes + "-" + String(dataHora.year()) + 
-  " " + hora + ":" + minuto + ":" + segundo);
-
+  return String(hora + ":" + minuto + ":" + segundo);
 }
 
 void acionaBuzzer(){
@@ -720,4 +784,11 @@ void inicializaMenu() {
   }
 
   lcd.clear();
+}
+
+void exibeTextoNoLCD(String primeiraLinha, String segundaLinha){
+    lcd.clear();
+    lcd.print(primeiraLinha);
+    lcd.setCursor(0,1);
+    lcd.print(segundaLinha);
 }
