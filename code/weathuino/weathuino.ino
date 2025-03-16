@@ -26,6 +26,11 @@ Testes a realizar:
 #define LED_VERDE 9
 #define LED_AZUL 8
 
+//pinos dos botões
+#define BOTAO_E 5
+#define BOTAO_M 6
+#define BOTAO_D 7
+
 //Códigos de erro das leituras e problemas dos sensores
 #define COD_ERRO_SENSOR_TEMPERATURA_MEDIDA 1
 #define COD_ERRO_SENSOR_UMIDADE_MEDIDA 2
@@ -221,6 +226,9 @@ void setup() {
   pinMode(LED_AZUL, OUTPUT);
   pinMode(LED_VERDE, OUTPUT);
   pinMode(BUZZER, OUTPUT);
+  pinMode(BOTAO_E, INPUT);
+  pinMode(BOTAO_M, INPUT);
+  pinMode(BOTAO_D, INPUT);
 
   //Inicializa os componentes
   EEPROM.begin();
@@ -243,7 +251,11 @@ void loop() {
   int offsetSeconds = config.fusoHorario * 3600; // pega as horas em seegundos
   timestampAtual = timestampAtual.unixtime() + offsetSeconds; // Adicionando o deslocamento ao tempo atual
 
-  mostrarDadosNaSerial();
+  //mostrarDadosNaSerial();
+  Serial.println(digitalRead(BOTAO_E));
+  Serial.println(digitalRead(BOTAO_M));
+  Serial.println(digitalRead(BOTAO_D));
+  Serial.println("");
 
   if (isnan(temperatura) || isnan(umidade)) // verifica se os valores do sensor dht são válidos e grava na eeprom o erro se não estiverem
   {
