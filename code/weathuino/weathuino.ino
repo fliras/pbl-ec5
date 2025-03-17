@@ -1,10 +1,3 @@
-/* TODO: 
-- Implementar a realização de medições e testes em função do período de leitura nas configurações;
-
-Testes a realizar:
-- Testar novas funcionalidades que forem implementadas;
-*/
-
 #include <avr/eeprom.h>
 #include <EEPROM.h>
 #include <LiquidCrystal_I2C.h>
@@ -13,12 +6,9 @@ Testes a realizar:
 #include <Wire.h>
 #include <Arduino.h>
 
-
 #define DHTTYPE DHT22 // No projeto físico trocar para DHT11
 #define SENSOR_TEMPERATURA_UMIDADE A1
-
 #define LDR A0 // pino LDR
-
 #define BUZZER 11 // Pino Buzzer
 
 //pinos do led rgb
@@ -70,11 +60,6 @@ int temperatura = 0.0;
 unsigned int umidade = 0;
 unsigned int luminosidade = 0;
 
-//Condições de irregularidade nas medidas caso sejam maiores ou menores que os limites
-bool temperaturaIrregular = false;
-bool umidadeIrregular = false;
-bool luminosidadeIrregular = false;
-
 // Estrutura para os dados de log dos erros
 struct DadosFalha{
   DateTime dataHora;
@@ -99,88 +84,11 @@ struct Configuracoes{
   byte unidadeTemperatura;
 };
 
-
-
-// funções para retornar se os valores estão dentro ou fora do limite
-bool valorEstaIrregular(bool temperaturaIrregular, bool umidadeIrregular, bool luminosidadeIrregular);
-bool temperaturaForaLimite(float temperaturaMedida);
-bool umidadeForaLimite(float umidadeMedida);
-bool luminosidadeForaLimite(unsigned int luminosidadeMedida);
-
-String parametroMostradoNoDisplay[] = { "Temp", "Lumi", "Umid" };
-short idParametroDisplay = 0;
-
-String montarStringTimeStamp(DateTime dataHora); // monta string do timestamp para uso em alguma saída visual
-
-void acionaBuzzer(); // aciona o buzzer em som contínuo
-void desligaBuzzer(); // desliga o buzzer
-
-
-// funções para acionamento de uma das cores do led rgb
-void acionaSinalVermelho();
-void acionaSinalAmarelo();
-void acionaSinalVerde();
-
-// Mostra as configurações locais na serial
-void mostarConfiguracoesLocal(Configuracoes configs);
-
-
-//Funções para buscar dados importantes na EEPROM
-void mostarConfiguracoesEEPROM();
-void mostrarDadosNaSerial();
-void mostrarDadosFalhaSalvos();
-DadosFalha resgataDadosFalhaEEPROMPorIndice(int indice);
-DadosFalha resgataDadosFalhaEEPROMPorEndereco(int endereco);
-int encontraEnderecoPorIndice(int indice);
-Configuracoes resgataConfiguracoesNaEEPROM();
-
-// Funções para gravação da EEPROM
-void gravarDadosFalhaNaEEPROM(byte codFalha, byte medida, DateTime timestamp);
-void gravarConfiguracoesNaEEPROM(Configuracoes configs);
-uint16_t montarCodigoErroEmUInt16(byte codFalhaComponente, byte medida);
-
-void atualizarMedidas(); // atualiza as variáveis de temperatura, umidade e luminosidade
-double converterCelsiusParaFahrenheit(double temperaturaCelsius);
-double converterCelsiusParaKelvin(double temperaturaCelsius);
-
-void voltarParaConfiguracoesDeFabrica();
-
-void limparRegistrosFalhaEEPROM(); //deixa todos os bytes da memória EEPROM em 0 e coloca o ultimo endereço livre no inicial
-
 //Configurações do sistema
+Configuracoes resgataConfiguracoesNaEEPROM();
 Configuracoes config = resgataConfiguracoesNaEEPROM();
 
-
-
-
-//Dados de menu
-/*
-1) Definir o range do sensor LDR (ausência de luz e luminosidade total)
-2) Definir limites de temperatura, umidade e luminosidade com os quais a placa irá trabalhar
-3) ativar/desativar alertas sonoros
-4) exibir registros de anormalidade
-*/
-enum MENU_STATE{
-  MAIN,
-  SETLDR,
-  SETSOUND,
-  SETTEMPMAX,
-  SETTEMPMIN,
-  SETHUMIMAX,
-  SETHUMIMIN,
-  SETLUMIMAX,
-  SETLUMIMIN,
-  GETREGISTRY
-  };
-
-enum BUTTON_TYPE{BUTTON_LEFT,BUTTON_MIDDLE,BUTTON_RIGHT};
-//LEFT    -> butao da esquerda( Escape )
-//MIDDLE  -> Butao do meio    (   <-   )
-//RIGHT   -> Butao da direita (   ->   )
-
-MENU_STATE current_menu = SETLDR;//O menu atual
-int main_menu_index = 05;//A opção selecionada quando estamo no menu principal.
-
+// Bytes do ícone na inicialização
 byte iconeWeathino1[] = {
   B00000, B10000, B11000, B11000,
   B11011, B11011, B01011, B00001
@@ -211,15 +119,22 @@ byte iconeWeathino6[] = {
   B01010, B01010, B01010, B01010
 };
 
+enum TELAS {
+  MEDICOES,
+  TIMESTAMP,
+  ALERTA
+};
+TELAS TELA_ATUAL = MEDICOES;
 
 void setup() {
+  // Reset dos dados apenas para título de teste
   limparRegistrosFalhaEEPROM();
-
   voltarParaConfiguracoesDeFabrica();
 
-
+  // Inicialização do serial
   Serial.begin(9600);
 
+  // Inicialização dos pinos
   pinMode(LDR, INPUT);
   pinMode(SENSOR_TEMPERATURA_UMIDADE, INPUT);
   pinMode(LED_VERMELHO, OUTPUT);
@@ -238,66 +153,94 @@ void setup() {
   if(!rtc.begin())
     Serial.println("RTC não inicializou");
 
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); // ajusta o rtc para o horário atual da gravação
+  // ajusta o rtc para o horário atual da gravação
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   inicializaMenu();
 }
 
 void loop() {
-
+  // Obtendo o timestamp atual de acordo com o GMT configurado
   timestampAtual = rtc.now();
+  int offsetSeconds = config.fusoHorario * 3600;
+  timestampAtual = timestampAtual.unixtime() + offsetSeconds;
+
   atualizarMedidas();
-  atualizaMedidasNoDisplay();
 
-  int offsetSeconds = config.fusoHorario * 3600; // pega as horas em seegundos
-  timestampAtual = timestampAtual.unixtime() + offsetSeconds; // Adicionando o deslocamento ao tempo atual
-
-  //mostrarDadosNaSerial();
-  Serial.println(digitalRead(BOTAO_E));
-  Serial.println(digitalRead(BOTAO_M));
-  Serial.println(digitalRead(BOTAO_D));
-  Serial.println("");
-
-  if (isnan(temperatura) || isnan(umidade)) // verifica se os valores do sensor dht são válidos e grava na eeprom o erro se não estiverem
+  // Validação dos valores obtidos por meio dos sensores
+  bool valoresDosSensoresValidos = !isnan(temperatura) && !isnan(umidade);
+  if (valoresDosSensoresValidos)
   {
-    gravarDadosFalhaNaEEPROM(COD_ERRO_SENSOR_DHT_FALHA, 0, timestampAtual);
-    acionaBuzzer();
+    desligaBuzzer();
   } 
   else{
-    desligaBuzzer();
+    gravarDadosFalhaNaEEPROM(COD_ERRO_SENSOR_DHT_FALHA, 0, timestampAtual);
+    acionaBuzzer();
   }
 
   // atualiza a verificação dos estados das medidas
-  temperaturaIrregular = temperaturaForaLimite(temperatura);
-  umidadeIrregular = umidadeForaLimite(umidade);
-  luminosidadeIrregular = luminosidadeForaLimite(luminosidade);
+  bool temperaturaIrregular = temperaturaForaLimite(temperatura);
+  bool umidadeIrregular = umidadeForaLimite(umidade);
+  bool luminosidadeIrregular = luminosidadeForaLimite(luminosidade);
+  bool ambienteIrregular = temperaturaIrregular || umidadeIrregular || luminosidadeIrregular;
   
-  // grava erro caso algum dado esteja fora do padrão
-  if(valorEstaIrregular(temperaturaIrregular, umidadeIrregular, luminosidadeIrregular)){
+  // grava e notifica o erro caso algum dado esteja fora do padrão
+  if(ambienteIrregular) {
+    String mensagemDeAlerta = "";
 
-    if(temperaturaIrregular)
+    if(temperaturaIrregular) {
       gravarDadosFalhaNaEEPROM(COD_ERRO_SENSOR_TEMPERATURA_MEDIDA, temperatura, timestampAtual);
-    if(umidadeIrregular)
+      mensagemDeAlerta = "Temp.: " + String(temperatura) + "C";
+    }
+    if(umidadeIrregular) {
       gravarDadosFalhaNaEEPROM(COD_ERRO_SENSOR_UMIDADE_MEDIDA, umidade, timestampAtual);
-    if(luminosidadeIrregular)
+      mensagemDeAlerta = "Umid.: " + String(umidade) + "%";
+    }
+    if(luminosidadeIrregular) {
       gravarDadosFalhaNaEEPROM(COD_ERRO_SENSOR_LUMINOSIDADE_MEDIDA, luminosidade, timestampAtual);
+      mensagemDeAlerta = "Lumin.: " + String(luminosidade) + "%";
+    }
+
+    TELA_ATUAL = TELAS::ALERTA;
+    exibeTextoNoLCD("AVISO!!!", mensagemDeAlerta);
 
     acionaSinalVermelho();
     acionaBuzzer();
-
   }
-  else{
+  else {
     acionaSinalVerde();
     desligaBuzzer();
   }
-  delay(2000);
+
+  switch(TELA_ATUAL) {
+    case TELAS::MEDICOES:
+      gerenciaTelaMedicoes();
+      break;
+    case TELAS::TIMESTAMP:
+      gerenciaTelaTimestamp();
+      break;
+    case TELAS::ALERTA:
+      if (!ambienteIrregular) TELA_ATUAL = TELAS::MEDICOES;
+      break;
+  }
+
+  bool exportacaoSolicitada = digitalRead(BOTAO_M);
+  if (exportacaoSolicitada) {
+    exportaRegistrosViaSerial();
+  }
+
+  delay(1000);
 }
 
-void atualizaMedidasNoDisplay() {
-  String dados = padRight(" " + String(temperatura) + "C", 4) + "  " +
+void gerenciaTelaMedicoes() {
+  bool botaoDireitoPressionado = digitalRead(BOTAO_D);
+  if (botaoDireitoPressionado) {
+    TELA_ATUAL = TELAS::TIMESTAMP;
+  } else {
+    String dados = padRight(" " + String(temperatura) + "C", 4) + "  " +
     padLeft(String(umidade) + "%", 4) + " " +
     padLeft(String(luminosidade) + "%", 4);
-
-  exibeTextoNoLCD(" TEMP UMID LUMI", dados);
+    exibeTextoNoLCD(" TEMP UMID LUMI", dados);    
+  }
 }
 
 String padLeft(String texto, int tamanho) {
@@ -314,30 +257,30 @@ String padRight(String texto, int tamanho) {
   return novaString;
 }
 
-bool valorEstaIrregular(bool temperaturaIrregular, bool umidadeIrregular, bool luminosidadeIrregular){
-  if(temperaturaIrregular || umidadeIrregular || luminosidadeIrregular)
-    return true;
-  return false;
+void gerenciaTelaTimestamp() {
+  bool botaoEsquerdoPressionado = digitalRead(BOTAO_E);
+  if (botaoEsquerdoPressionado) {
+    TELA_ATUAL = TELAS::MEDICOES;
+  } else {
+    String data = montaStringData(timestampAtual);
+    String hora = montaStringHora(timestampAtual);
+    exibeTextoNoLCD("   " + data, "    " + hora);
+  }
 }
 
 bool temperaturaForaLimite(float temperaturaMedida){
-  if(temperaturaMedida < config.minTemperatura || temperaturaMedida > config.maxTemperatura)
-      return true;
-    return false;
+  return temperaturaMedida < config.minTemperatura || temperaturaMedida > config.maxTemperatura;
 }
 
 bool umidadeForaLimite(unsigned int umidadeMedida){
-  if(umidadeMedida < config.minUmidade || umidadeMedida > config.maxUmidade)
-      return true;
-    return false;
+  return umidadeMedida < config.minUmidade || umidadeMedida > config.maxUmidade;
 }
 
 bool luminosidadeForaLimite(unsigned int luminosidadeMedida){
-  if(luminosidadeMedida < config.minLuminosidade || luminosidadeMedida > config.maxLuminosidade)
-      return true;
-    return false;
+  return luminosidadeMedida < config.minLuminosidade || luminosidadeMedida > config.maxLuminosidade;
 }
 
+// monta string do timestamp para uso em alguma saída visual
 String montarStringTimeStamp(DateTime dataHora){
   return montaStringData(dataHora) + " " + montaStringHora(dataHora);
 }
@@ -376,76 +319,19 @@ String montaStringHora(DateTime dataHora) {
   return String(hora + ":" + minuto + ":" + segundo);
 }
 
+// aciona o buzzer em som contínuo
 void acionaBuzzer(){
   tone(BUZZER, 600);
 }
 
+// desliga o buzzer
 void desligaBuzzer(){
   noTone(BUZZER); 
 }
 
-
-// TODO Corrigir
-/*
-void alarmeTipo1(){
-  unsigned long millisAnterior = millis();
-      tone(BUZZER,600);
-  for(int i = 0; i < 10; i++){
-
-    if (millis() - millisAnterior > 5000) {
-      tone(BUZZER,600);
-    }
-
-    if(millis() - millisAnterior > 10000){
-      tone(BUZZER, 900);
-      millisAnterior = millis();
-    }
-  }
-}
-
-void alarmeTipo2(){
-  unsigned long millisAnterior = millis();
-  tone(BUZZER, 600);
-  for(int i = 0; i < 10; i++){
-
-    if (millis() - millisAnterior > 500) {
-      tone(BUZZER, 200);
-    }
-
-    if(millis() - millisAnterior > 1000){
-      tone(BUZZER, 600);
-      millisAnterior = millis();
-    }
-  }
-}
-
-void alarmeTipo3(){
-  unsigned long millisAnterior = millis();
-  tone(BUZZER, 600);
-  for(int i = 0; i < 10; i++){
-
-    if (millis() - millisAnterior > 250) {
-      tone(BUZZER, 200);
-    }
-
-    if(millis() - millisAnterior > 500){
-      tone(BUZZER, 600);
-      millisAnterior = millis();
-    }
-  }
-}
-// Corrigir até aqui]
-*/
-
 void acionaSinalVermelho(){
     analogWrite(LED_VERMELHO, 255);
     analogWrite(LED_VERDE, 0);
-    analogWrite(LED_AZUL, 0);
-}
-
-void acionaSinalAmarelo(){
-    analogWrite(LED_VERMELHO, 255);
-    analogWrite(LED_VERDE, 255);
     analogWrite(LED_AZUL, 0);
 }
 
@@ -455,74 +341,7 @@ void acionaSinalVerde(){
     analogWrite(LED_AZUL, 0);
 }
 
-void mostarConfiguracoesLocal(Configuracoes configs){
-
-  Serial.print("Minimo valor LDR: ");
-  Serial.println(configs.minLDR);
-  Serial.print("Máximo valor LDR: ");
-  Serial.println(configs.maxLDR);
-  Serial.print("Minimo valor Temperatura: ");
-  Serial.println(configs.minTemperatura);
-  Serial.print("Máximo valor Temperatura: ");
-  Serial.println(configs.maxTemperatura);
-  Serial.print("Mínimo valor Umidade: ");
-  Serial.println(configs.minUmidade);
-  Serial.print("Máximo valor Umidade: ");
-  Serial.println(configs.maxUmidade);
-  Serial.print("Mínimo valor Luminosidade: ");
-  Serial.println(configs.minLuminosidade);
-  Serial.print("Máximo valor Luminosidade: ");
-  Serial.println(configs.maxLuminosidade);
-  Serial.print("Estado Buzzer: ");
-  Serial.println(configs.estadoBuzzer);
-  Serial.print("Tipo de som: ");
-  Serial.println(configs.tipoSomBuzzer);
-  Serial.print("Período de medição: ");
-  Serial.println(configs.periodoMedicao);
-  Serial.print("Idioma: ");
-  Serial.println(configs.idioma);
-  Serial.print("Fuso Horário: ");
-  Serial.println(configs.fusoHorario);
-  Serial.print("Unidade de Temperatura: ");
-  Serial.println(configs.unidadeTemperatura);
-
-}
-
-void mostarConfiguracoesEEPROM(){
-  Configuracoes configs = resgataConfiguracoesNaEEPROM();
-
-  Serial.print("Minimo valor LDR: ");
-  Serial.println(configs.minLDR);
-  Serial.print("Máximo valor LDR: ");
-  Serial.println(configs.maxLDR);
-  Serial.print("Minimo valor Temperatura: ");
-  Serial.println(configs.minTemperatura);
-  Serial.print("Máximo valor Temperatura: ");
-  Serial.println(configs.maxTemperatura);
-  Serial.print("Mínimo valor Umidade: ");
-  Serial.println(configs.minUmidade);
-  Serial.print("Máximo valor Umidade: ");
-  Serial.println(configs.maxUmidade);
-  Serial.print("Mínimo valor Luminosidade: ");
-  Serial.println(configs.minLuminosidade);
-  Serial.print("Máximo valor Luminosidade: ");
-  Serial.println(configs.maxLuminosidade);
-  Serial.print("Estado Buzzer: ");
-  Serial.println(configs.estadoBuzzer);
-  Serial.print("Tipo de som: ");
-  Serial.println(configs.tipoSomBuzzer);
-  Serial.print("Período de medição: ");
-  Serial.println(configs.periodoMedicao);
-  Serial.print("Idioma: ");
-  Serial.println(configs.idioma);
-  Serial.print("Fuso Horário: ");
-  Serial.println(configs.fusoHorario);
-  Serial.print("Unidade de Temperatura: ");
-  Serial.println(configs.unidadeTemperatura);
-
-}
-
-void mostrarDadosNaSerial(){
+void mostraDadosNaSerial(){
   Serial.print("Temperatura: ");
   Serial.print(temperatura);
   Serial.print(" C° ");
@@ -536,7 +355,7 @@ void mostrarDadosNaSerial(){
   Serial.println(montarStringTimeStamp(timestampAtual));
 }
 
-void mostrarDadosFalhaSalvos(){
+void mostraDadosFalhaSalvos(){
   int enderecoAtual = ENDERECO_INICIAL_REGISTROS_NA_EEPROM;
   int ultimoEnderecoLivre = EEPROM.read(0);
 
@@ -563,13 +382,10 @@ DadosFalha resgataDadosFalhaEEPROMPorIndice(int indice){
   return resgataDadosFalhaEEPROMPorEndereco(enderecoCorrespondente);
 }
 
-
 DadosFalha resgataDadosFalhaEEPROMPorEndereco(int endereco){
-  
   DadosFalha dadosResgatados;
   dadosResgatados.dataHora = DateTime(eeprom_read_dword(endereco));
   dadosResgatados.erro = eeprom_read_word(endereco + 4);
-
   return dadosResgatados;
 }
 
@@ -672,21 +488,12 @@ uint16_t montarCodigoErroEmUInt16(byte codFalhaComponente, byte medida){
   return codigoErro;
 }
 
+// atualiza as variáveis de temperatura, umidade e luminosidade
 void atualizarMedidas(){
   umidade = dht.readHumidity();
   temperatura = dht.readTemperature(); 
   luminosidade = analogRead(LDR);
   luminosidade = map(luminosidade, config.minLDR, config.maxLDR, 100, 0); // corrigir para o caso do ldr físico 
-}
-
-double converterCelsiusParaFahrenheit(double temperaturaCelsius){
-  double temperaturaFahrenheit = (temperaturaCelsius * 1,8) + 32;
-  return temperaturaFahrenheit;
-}
-
-double converterCelsiusParaKelvin(double temperaturaCelsius){
-  double temperaturaKelvin = temperaturaCelsius + 273.15;
-  return temperaturaKelvin;
 }
 
 void voltarParaConfiguracoesDeFabrica(){
@@ -708,6 +515,7 @@ void voltarParaConfiguracoesDeFabrica(){
   gravarConfiguracoesNaEEPROM(config);
 }
 
+//deixa todos os bytes da memória EEPROM em 0 e coloca o ultimo endereço livre no inicial
 void limparRegistrosFalhaEEPROM(){
   EEPROM.write(0,ENDERECO_INICIAL_REGISTROS_NA_EEPROM); // Reinicia o último endereço livre para registro
   for (int i = ENDERECO_INICIAL_REGISTROS_NA_EEPROM; i < EEPROM.length(); i++) {
@@ -715,9 +523,6 @@ void limparRegistrosFalhaEEPROM(){
   }
 }
 
-
-
-// Métodos Lucas e Victor:
 void transicaoInicial() {
   lcd.clear();
 
@@ -752,22 +557,7 @@ void transicaoInicial() {
   lcd.clear();
 }
 
-void imprimirIcone(){
-  
-  lcd.setCursor(12, 0);
-  lcd.write(3);
-  lcd.setCursor(12, 1);
-  lcd.write(2);
-  lcd.setCursor(13, 0);
-  lcd.write(1);
-  lcd.setCursor(13, 1);
-  lcd.write(0);
-  lcd.setCursor(14, 0);
-  lcd.write(5);
-  lcd.setCursor(14, 1);
-  lcd.write(4);
-}
-
+// Método para Exibir o ícone da Aplicação
 void inicializaMenu() {
   lcd.createChar(0, iconeWeathino1);
   lcd.createChar(1, iconeWeathino2);
@@ -798,9 +588,31 @@ void inicializaMenu() {
   lcd.clear();
 }
 
+// Método para exibir o ícone da aplicação
+void imprimirIcone(){
+  lcd.setCursor(12, 0);
+  lcd.write(3);
+  lcd.setCursor(12, 1);
+  lcd.write(2);
+  lcd.setCursor(13, 0);
+  lcd.write(1);
+  lcd.setCursor(13, 1);
+  lcd.write(0);
+  lcd.setCursor(14, 0);
+  lcd.write(5);
+  lcd.setCursor(14, 1);
+  lcd.write(4);
+}
+
+// Método para exibir textos na primeira e segunda linha do display
 void exibeTextoNoLCD(String primeiraLinha, String segundaLinha){
     lcd.clear();
     lcd.print(primeiraLinha);
     lcd.setCursor(0,1);
     lcd.print(segundaLinha);
+}
+
+void exportaRegistrosViaSerial() {
+  String timestamp = montarStringTimeStamp(timestampAtual);
+  Serial.println("[{\"timestamp\":\"" + timestamp + "\", \"luminosidade\": 87},{\"timestamp\":\"" + timestamp + "\", \"temperatura\": 69},{\"timestamp\":\"" + timestamp + "\", \"umidade\": 1},{\"timestamp\":\"" + timestamp + "\", \"luminosidade\": 87},{\"timestamp\":\"" + timestamp + "\", \"temperatura\": 69},{\"timestamp\":\"" + timestamp + "\", \"umidade\": 1}]");
 }
