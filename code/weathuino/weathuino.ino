@@ -162,8 +162,19 @@ void setup() {
 void loop() {
   // Obtendo o timestamp atual de acordo com o GMT configurado
   timestampAtual = rtc.now();
-  int offsetSeconds = config.fusoHorario * 3600;
-  timestampAtual = timestampAtual.unixtime() + offsetSeconds;
+  
+  // int offsetSeconds = config.fusoHorario * 3600;
+  // timestampAtual = timestampAtual.unixtime() + offsetSeconds;
+  
+  // testar este bloco:
+  timestampAtual = new DateTime(
+    timestampAtual.year(),
+    timestampAtual.month(),
+    timestampAtual.day(),
+    (timestampAtual.hour() + FUSO_HORARIO_ATUAL + 24) % 24, // Ajuste de fuso horário
+    timestampAtual.minute(),
+    timestampAtual.second()
+);
 
   atualizarMedidas();
   // mostraDadosNaSerial();
@@ -217,12 +228,15 @@ void loop() {
   switch(TELA_ATUAL) {
     case TELAS::MEDICOES:
       gerenciaTelaMedicoes();
+      delay(3000);
       break;
     case TELAS::TIMESTAMP:
       gerenciaTelaTimestamp();
+      delay(1000);
       break;
     case TELAS::ALERTA:
       if (!ambienteIrregular) TELA_ATUAL = TELAS::MEDICOES;
+      delay(5000);
       break;
   }
 
@@ -230,8 +244,6 @@ void loop() {
   if (exportacaoSolicitada) {
     exportaRegistrosViaSerial();
   }
-
-  delay(3000);
 }
 
 // controla a tela de exibir as medidas
