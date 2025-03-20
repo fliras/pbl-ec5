@@ -67,6 +67,7 @@ Ao clicar neste botão por alguns segundos, será disponibilizado via Serial um 
 
 **_Botão Direito_**: Exibir a tela de data e hora atuais.
 Ao clicar neste botão por alguns segundos, a tela de data e hora será exibida:
+
 ![Tela Principal](docs/assets/tela-timestamp.png)
 
 ## Sistema de emergência
