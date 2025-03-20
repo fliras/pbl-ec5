@@ -41,7 +41,7 @@ Como dito anteriormente, o Weathuino monitora em tempo real o ambiente no qual e
 
 | Temperatura (°C) | Luminosidade (%) | Umidade (%) |
 | ------------------- | ------------------ | ------------- |
-| 15 a 22           | 0 a 50           | 30 a 75     |
+| 15 a 25           | 0 a 50           | 30 a 75     |
 
 ### Em um cenário simulado
 
