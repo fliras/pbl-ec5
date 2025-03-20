@@ -1,3 +1,4 @@
+// bibliotecas importadas
 #include <avr/eeprom.h>
 #include <EEPROM.h>
 #include <LiquidCrystal_I2C.h>
@@ -6,7 +7,7 @@
 #include <Wire.h>
 #include <Arduino.h>
 
-#define DHTTYPE DHT22 // No projeto físico trocar para DHT11
+#define DHTTYPE DHT11 // No projeto físico trocar para DHT11
 #define SENSOR_TEMPERATURA_UMIDADE A1
 #define LDR A0 // pino LDR
 #define BUZZER 11 // Pino Buzzer
@@ -37,11 +38,11 @@
 #define LIMITE_MINIMO_LDR 0
 #define LIMITE_MAXIMO_LDR 1023
 #define LIMITE_MINIMO_SENSOR_TEMPERATURA_INICIAL 15
-#define LIMITE_MAXIMO_SENSOR_TEMPERATURA_INICIAL 25
+#define LIMITE_MAXIMO_SENSOR_TEMPERATURA_INICIAL 28
 #define LIMITE_MINIMO_SENSOR_UMIDADE_INICIAL 30
-#define LIMITE_MAXIMO_SENSOR_UMIDADE_INICIAL 50
+#define LIMITE_MAXIMO_SENSOR_UMIDADE_INICIAL 75
 #define LIMITE_MINIMO_SENSOR_LUMINOSIDADE_INICIAL 0
-#define LIMITE_MAXIMO_SENSOR_LUMINOSIDADE_INICIAL 30
+#define LIMITE_MAXIMO_SENSOR_LUMINOSIDADE_INICIAL 45
 #define IDIOMA_INICIAL 1
 #define ESTADO_BUZZER_INICIAL 1
 #define TIPO_SOM_BUZZER_INICIAL 1
@@ -165,6 +166,7 @@ void loop() {
   timestampAtual = timestampAtual.unixtime() + offsetSeconds;
 
   atualizarMedidas();
+  // mostraDadosNaSerial();
 
   // Validação dos valores obtidos por meio dos sensores
   bool valoresDosSensoresValidos = !isnan(temperatura) && !isnan(umidade);
@@ -211,6 +213,7 @@ void loop() {
     desligaBuzzer();
   }
 
+  // gerenciamento das telas em exibição
   switch(TELA_ATUAL) {
     case TELAS::MEDICOES:
       gerenciaTelaMedicoes();
@@ -228,9 +231,10 @@ void loop() {
     exportaRegistrosViaSerial();
   }
 
-  delay(1000);
+  delay(3000);
 }
 
+// controla a tela de exibir as medidas
 void gerenciaTelaMedicoes() {
   bool botaoDireitoPressionado = digitalRead(BOTAO_D);
   if (botaoDireitoPressionado) {
@@ -243,6 +247,7 @@ void gerenciaTelaMedicoes() {
   }
 }
 
+// utilitário para preencher uma string à esquerda
 String padLeft(String texto, int tamanho) {
   String novaString = texto;
   while (novaString.length() < tamanho)
@@ -250,6 +255,7 @@ String padLeft(String texto, int tamanho) {
   return novaString;
 }
 
+// utilitário para preencher uma string à direita
 String padRight(String texto, int tamanho) {
   String novaString = texto;
   while (novaString.length() < tamanho)
@@ -257,6 +263,7 @@ String padRight(String texto, int tamanho) {
   return novaString;
 }
 
+// controla a tela de exibir timestamp
 void gerenciaTelaTimestamp() {
   bool botaoEsquerdoPressionado = digitalRead(BOTAO_E);
   if (botaoEsquerdoPressionado) {
@@ -285,6 +292,7 @@ String montarStringTimeStamp(DateTime dataHora){
   return montaStringData(dataHora) + " " + montaStringHora(dataHora);
 }
 
+// monta uma data por meio de um timestamp
 String montaStringData(DateTime dataHora) {
   String dia = "";
   String mes = "";
@@ -300,6 +308,7 @@ String montaStringData(DateTime dataHora) {
   return String(dia + "/" + mes + "/" + String(dataHora.year()));
 }
 
+// monta uma hora por meio de um timestamp
 String montaStringHora(DateTime dataHora) {
   String hora = "";
   String minuto = "";
@@ -341,6 +350,7 @@ void acionaSinalVerde(){
     analogWrite(LED_AZUL, 0);
 }
 
+// método auxiliar apenas para exibir dados na serial
 void mostraDadosNaSerial(){
   Serial.print("Temperatura: ");
   Serial.print(temperatura);
@@ -355,6 +365,7 @@ void mostraDadosNaSerial(){
   Serial.println(montarStringTimeStamp(timestampAtual));
 }
 
+// busca e exibe os registros de anormalidade salvos na EEPROM
 void mostraDadosFalhaSalvos(){
   int enderecoAtual = ENDERECO_INICIAL_REGISTROS_NA_EEPROM;
   int ultimoEnderecoLivre = EEPROM.read(0);
@@ -372,16 +383,7 @@ void mostraDadosFalhaSalvos(){
   }
 }
 
-DadosFalha resgataDadosFalhaEEPROMPorIndice(int indice){
-  int enderecoCorrespondente = encontraEnderecoPorIndice(indice);
-  if(enderecoCorrespondente < 0){
-    DadosFalha dado;
-    dado.erro = 0;
-    return dado; //retorna um DadosFalha com erro 0 e data fora do comum;
-  }
-  return resgataDadosFalhaEEPROMPorEndereco(enderecoCorrespondente);
-}
-
+// obtém um registro de anormalidade por meio de seu endereço na eeprom
 DadosFalha resgataDadosFalhaEEPROMPorEndereco(int endereco){
   DadosFalha dadosResgatados;
   dadosResgatados.dataHora = DateTime(eeprom_read_dword(endereco));
@@ -396,6 +398,7 @@ int encontraEnderecoPorIndice(int indice){
   return endereco;
 }
 
+// Obtém as configurações de fábrica da placa weathuino
 Configuracoes resgataConfiguracoesNaEEPROM(){
   Configuracoes configs;
   int enderecoAtual = ENDERECO_INICIAL_CONFIGURACOES;
@@ -451,6 +454,7 @@ void gravarDadosFalhaNaEEPROM(byte codFalha, byte medida, DateTime timestamp){
   EEPROM.write(0,ultimoEnderecoLivre);
 }
 
+// grava as configurações do Weathuino na EEPROM
 void gravarConfiguracoesNaEEPROM(Configuracoes configs){
   int enderecoAtual = ENDERECO_INICIAL_CONFIGURACOES;
   eeprom_update_word(enderecoAtual,configs.minLDR);
@@ -493,7 +497,8 @@ void atualizarMedidas(){
   umidade = dht.readHumidity();
   temperatura = dht.readTemperature(); 
   luminosidade = analogRead(LDR);
-  luminosidade = map(luminosidade, config.minLDR, config.maxLDR, 100, 0); // corrigir para o caso do ldr físico 
+  // luminosidade = map(luminosidade, config.minLDR, config.maxLDR, 100, 0); // usar no simulador 
+  luminosidade = map(luminosidade, config.minLDR, config.maxLDR, 0, 100); // usar no fisico
 }
 
 void voltarParaConfiguracoesDeFabrica(){
@@ -523,6 +528,7 @@ void limparRegistrosFalhaEEPROM(){
   }
 }
 
+// Exibe a transição exibida na inicialização do LCD
 void transicaoInicial() {
   lcd.clear();
 
@@ -612,7 +618,41 @@ void exibeTextoNoLCD(String primeiraLinha, String segundaLinha){
     lcd.print(segundaLinha);
 }
 
+// método para formatar o json exibido via serial com os registros da eeprom
 void exportaRegistrosViaSerial() {
-  String timestamp = montarStringTimeStamp(timestampAtual);
-  Serial.println("[{\"timestamp\":\"" + timestamp + "\", \"luminosidade\": 87},{\"timestamp\":\"" + timestamp + "\", \"temperatura\": 69},{\"timestamp\":\"" + timestamp + "\", \"umidade\": 1},{\"timestamp\":\"" + timestamp + "\", \"luminosidade\": 87},{\"timestamp\":\"" + timestamp + "\", \"temperatura\": 69},{\"timestamp\":\"" + timestamp + "\", \"umidade\": 1}]");
+  int enderecoAtual = ENDERECO_INICIAL_REGISTROS_NA_EEPROM;
+  int ultimoEnderecoLivre = EEPROM.read(0);
+
+  Serial.println("[");
+  while(enderecoAtual < ultimoEnderecoLivre){
+    DadosFalha dadosResgatados = resgataDadosFalhaEEPROMPorEndereco(enderecoAtual);
+    int codigoErro = static_cast<int>(dadosResgatados.erro/1000);
+    int valorMedida = dadosResgatados.erro - static_cast<int>(dadosResgatados.erro/1000)*1000;
+    String sensorMedida="";
+
+    switch(codigoErro){
+      case 1:
+        sensorMedida = "temperatura";
+      break;
+      case 2:
+        sensorMedida = "umidade";
+      break;
+      case 3:
+        sensorMedida = "luminosidade";
+      break;
+      case 4:
+        sensorMedida = "ErroSensorDHT";
+      break;
+    }
+
+    String registroJson = "";
+    registroJson = String(registroJson + "{\"timestamp\":" + "\"" + String(dadosResgatados.dataHora.timestamp()) + "\","+
+    "\"" + sensorMedida + "\":" + "\"" +String(valorMedida)+ "\"" + "}");
+
+    enderecoAtual += 6;
+    if(enderecoAtual < ultimoEnderecoLivre)
+      registroJson = String(registroJson + ",");
+    Serial.println(registroJson);
+  }
+  Serial.println("]");
 }
