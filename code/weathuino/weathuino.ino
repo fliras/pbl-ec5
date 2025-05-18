@@ -38,11 +38,11 @@
 #define LIMITE_MINIMO_LDR 0
 #define LIMITE_MAXIMO_LDR 1023
 #define LIMITE_MINIMO_SENSOR_TEMPERATURA_INICIAL 15
-#define LIMITE_MAXIMO_SENSOR_TEMPERATURA_INICIAL 28
+#define LIMITE_MAXIMO_SENSOR_TEMPERATURA_INICIAL 25
 #define LIMITE_MINIMO_SENSOR_UMIDADE_INICIAL 30
 #define LIMITE_MAXIMO_SENSOR_UMIDADE_INICIAL 75
 #define LIMITE_MINIMO_SENSOR_LUMINOSIDADE_INICIAL 0
-#define LIMITE_MAXIMO_SENSOR_LUMINOSIDADE_INICIAL 45
+#define LIMITE_MAXIMO_SENSOR_LUMINOSIDADE_INICIAL 50
 #define IDIOMA_INICIAL 1
 #define ESTADO_BUZZER_INICIAL 1
 #define TIPO_SOM_BUZZER_INICIAL 1
@@ -162,19 +162,6 @@ void setup() {
 void loop() {
   // Obtendo o timestamp atual de acordo com o GMT configurado
   timestampAtual = rtc.now();
-  
-  // int offsetSeconds = config.fusoHorario * 3600;
-  // timestampAtual = timestampAtual.unixtime() + offsetSeconds;
-  
-  // testar este bloco:
-  timestampAtual = new DateTime(
-    timestampAtual.year(),
-    timestampAtual.month(),
-    timestampAtual.day(),
-    (timestampAtual.hour() + FUSO_HORARIO_ATUAL + 24) % 24, // Ajuste de fuso horário
-    timestampAtual.minute(),
-    timestampAtual.second()
-);
 
   atualizarMedidas();
   // mostraDadosNaSerial();
@@ -228,7 +215,7 @@ void loop() {
   switch(TELA_ATUAL) {
     case TELAS::MEDICOES:
       gerenciaTelaMedicoes();
-      delay(3000);
+      delay(1000);
       break;
     case TELAS::TIMESTAMP:
       gerenciaTelaTimestamp();
