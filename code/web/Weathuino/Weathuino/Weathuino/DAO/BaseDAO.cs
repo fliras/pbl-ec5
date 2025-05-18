@@ -14,18 +14,17 @@ namespace Weathuino.DAO
         }
 
         protected string Tabela { get; set; }
-        protected string NomeSpListagem { get; set; } = "spListagem";
         protected abstract SqlParameter[] CriaParametros(T model);
         protected abstract T MontaModel(DataRow registro);
         protected abstract void SetTabela();
 
         public virtual void Insert(T model)
         {
-            HelperDAO.ExecutaProc("spInsert_" + Tabela, CriaParametros(model));
+            HelperDAO.ExecutaProc("spInsere_" + Tabela, CriaParametros(model));
         }
         public virtual void Update(T model)
         {
-            HelperDAO.ExecutaProc("spUpdate_" + Tabela, CriaParametros(model));
+            HelperDAO.ExecutaProc("spAltera_" + Tabela, CriaParametros(model));
         }
         public virtual void Delete(int id)
         {
@@ -41,9 +40,8 @@ namespace Weathuino.DAO
             var p = new SqlParameter[]
             {
                new SqlParameter("id", id),
-               new SqlParameter("tabela", Tabela)
             };
-            var tabela = HelperDAO.ExecutaProcSelect("spConsulta", p);
+            var tabela = HelperDAO.ExecutaProcSelect($"spConsulta_{Tabela}", p);
             if (tabela.Rows.Count == 0)
                 return null;
             else
@@ -65,7 +63,7 @@ namespace Weathuino.DAO
                 new SqlParameter("id", DBNull.Value),
             };
 
-            var tabela = HelperDAO.ExecutaProcSelect(NomeSpListagem, p);
+            var tabela = HelperDAO.ExecutaProcSelect($"spConsulta_{Tabela}", p);
             List<T> lista = new List<T>();
             foreach (DataRow registro in tabela.Rows)
                 lista.Add(MontaModel(registro));

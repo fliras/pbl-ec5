@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Weathuino.Models;
@@ -25,23 +24,6 @@ namespace Weathuino.DAO
             return BCrypt.Net.BCrypt.EnhancedHashPassword(texto, 13);
         }
 
-        private SqlParameter[] CriaParametrosConsulta(int id = 0)
-        {
-            if (id == 0)
-                return new SqlParameter[] { new SqlParameter("id", DBNull.Value) };
-            else
-                return new SqlParameter[] { new SqlParameter("id", id) };
-        }
-
-        private SqlParameter[] CriaParametrosDelete(string nomeTabela, int idRegistro)
-        {
-            return new SqlParameter[]
-            {
-                new SqlParameter("tabela", nomeTabela),
-                new SqlParameter("id", idRegistro)
-            };
-        }
-
         protected override UsuarioViewModel MontaModel(DataRow row)
         {
             return new UsuarioViewModel()
@@ -60,7 +42,6 @@ namespace Weathuino.DAO
         protected override void SetTabela()
         {
             Tabela = "usuarios";
-            NomeSpListagem = "spConsultaUsuarios";
         }
     }
 }

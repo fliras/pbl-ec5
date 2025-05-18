@@ -63,7 +63,6 @@ namespace Weathuino.DAO
         protected override void SetTabela()
         {
             Tabela = "medidores";
-            NomeSpListagem = "spConsultaMedidores";
         }
     }
 }
