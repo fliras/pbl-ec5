@@ -18,7 +18,7 @@ USE weathuinodb;
 -------------------------------------------------
 
 -- Create table: perfis_acesso
-CREATE TABLE perfis_acesso (
+CREATE TABLE perfisAcesso (
     id INT IDENTITY(1,1) PRIMARY KEY,
     nome VARCHAR(50) NOT NULL
 );
@@ -31,7 +31,7 @@ CREATE TABLE usuarios (
     email VARCHAR(100) NOT NULL,
     senha CHAR(60) NOT NULL,
     id_perfil_acesso INT NOT NULL,
-    FOREIGN KEY (id_perfil_acesso) REFERENCES perfis_acesso(id)
+    FOREIGN KEY (id_perfil_acesso) REFERENCES perfisAcesso(id)
 );
 GO
 
@@ -58,7 +58,7 @@ GO
 
 -- SEEDS
 -------------------------------------------------
-INSERT INTO perfis_acesso (nome) VALUES
+INSERT INTO perfisAcesso (nome) VALUES
 ('ADMIN'),
 ('COMUM');
 
@@ -85,7 +85,7 @@ INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, id_m
 
 DROP PROCEDURE IF EXISTS spInsereUsuario
 GO
-CREATE PROCEDURE spInsereUsuario
+CREATE PROCEDURE spInsere_usuarios
 (
 	@id INTEGER,
 	@nome VARCHAR(100),
@@ -100,9 +100,9 @@ BEGIN
 END
 GO
 
-DROP PROCEDURE IF EXISTS spAlteraUsuario
+DROP PROCEDURE IF EXISTS spAltera_usuarios
 GO
-CREATE PROCEDURE spAlteraUsuario
+CREATE PROCEDURE spAltera_usuarios
 (
 	@id INTEGER,
 	@nome VARCHAR(100),
@@ -121,9 +121,9 @@ BEGIN
 END
 GO
 
-DROP PROCEDURE IF EXISTS spConsultaUsuarios
+DROP PROCEDURE IF EXISTS spConsulta_usuarios
 GO
-CREATE PROCEDURE spConsultaUsuarios
+CREATE PROCEDURE spConsulta_usuarios
 (
 	@id INTEGER
 )
@@ -131,7 +131,7 @@ AS
 BEGIN
 	DECLARE @query VARCHAR(MAX) = 'SELECT u.id idUsuario, u.nome nomeUsuario, u.email emailUsuario, '
 	    + 'u.senha senhaUsuario, pa.id idPerfilAcesso, pa.nome nomePerfilAcesso FROM usuarios u '
-		+ 'INNER JOIN perfis_acesso pa ON pa.id = u.id_perfil_acesso ';
+		+ 'INNER JOIN perfisAcesso pa ON pa.id = u.id_perfil_acesso ';
 
 	IF ISNULL(@id, 0) <> 0
 		SET @query = @query + 'WHERE u.id = ' + CAST(@id as VARCHAR(MAX));
@@ -142,9 +142,9 @@ GO
 
 --
 
-DROP PROCEDURE IF EXISTS spInsereEstufa
+DROP PROCEDURE IF EXISTS spInsere_estufas
 GO
-CREATE PROCEDURE spInsereEstufa
+CREATE PROCEDURE spInsere_estufas
 (
 	@id INTEGER,
 	@nome VARCHAR(100),
@@ -160,9 +160,9 @@ BEGIN
 END
 GO
 
-DROP PROCEDURE IF EXISTS spAlteraEstufa
+DROP PROCEDURE IF EXISTS spAltera_estufas
 GO
-CREATE PROCEDURE spAlteraEstufa
+CREATE PROCEDURE spAltera_estufas
 (
 	@id INTEGER,
 	@nome VARCHAR(100),
@@ -183,9 +183,9 @@ BEGIN
 END
 GO
 
-DROP PROCEDURE IF EXISTS spConsultaEstufas
+DROP PROCEDURE IF EXISTS spConsulta_estufas
 GO
-CREATE PROCEDURE spConsultaEstufas
+CREATE PROCEDURE spConsulta_estufas
 (
 	@id INTEGER
 )
@@ -204,9 +204,9 @@ GO
 
 --
 
-DROP PROCEDURE IF EXISTS spInsereMedidor
+DROP PROCEDURE IF EXISTS spInsere_medidores
 GO
-CREATE PROCEDURE spInsereMedidor
+CREATE PROCEDURE spInsere_medidores
 (
 	@id INTEGER,
 	@nome VARCHAR(45)
@@ -218,9 +218,9 @@ BEGIN
 END
 GO
 
-DROP PROCEDURE IF EXISTS spAlteraMedidor
+DROP PROCEDURE IF EXISTS spAltera_medidores
 GO
-CREATE PROCEDURE spAlteraMedidor
+CREATE PROCEDURE spAltera_medidores
 (
 	@id INTEGER,
 	@nome VARCHAR(45)
@@ -232,9 +232,9 @@ BEGIN
 END
 GO
 
-DROP PROCEDURE IF EXISTS spConsultaMedidores
+DROP PROCEDURE IF EXISTS spConsulta_medidores
 GO
-CREATE PROCEDURE spConsultaMedidores
+CREATE PROCEDURE spConsulta_medidores
 (
 	@id INTEGER
 )
@@ -271,15 +271,15 @@ GO
 
 --
 
-DROP PROCEDURE IF EXISTS spConsultaPerfisAcesso
+DROP PROCEDURE IF EXISTS spConsulta_perfisAcesso
 GO
-CREATE PROCEDURE spConsultaPerfisAcesso
+CREATE PROCEDURE spConsulta_perfisAcesso
 (
 	@id INTEGER
 )
 AS
 BEGIN
-	DECLARE @query VARCHAR(MAX) = 'SELECT pa.id idPerfilAcesso, pa.nome nomePerfilAcesso FROM perfis_acesso pa ';
+	DECLARE @query VARCHAR(MAX) = 'SELECT pa.id idPerfilAcesso, pa.nome nomePerfilAcesso FROM perfisAcesso pa ';
 
 	IF ISNULL(@id, 0) <> 0
 		SET @query = @query + 'WHERE pa.id = ' + CAST(@id as VARCHAR(MAX));
