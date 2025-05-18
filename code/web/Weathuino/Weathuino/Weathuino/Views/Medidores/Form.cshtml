@@ -1,0 +1,37 @@
+﻿@model MedidorViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Medidores";
+}
+
+<h2 class="mb-4">Cadastro de Medidores</h2>
+
+<div class="row">
+    <div class="col-4">
+        <form action="Salvar" method="POST">
+            <input type="hidden" name="Operacao" value="@ViewBag.Operacao" />
+
+            <label for="Id" class="control-label">ID</label>
+            @if (ViewBag.Operacao == "I")
+            {
+                <input asp-for="Id" class="form-control" />
+            }
+            else
+            {
+                <input asp-for="Id" class="form-control" readonly />
+            }
+            <span asp-validation-for="Id" class="text-danger"></span>
+            <br />
+
+            <label for="Nome" class="control-label">Nome</label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+            <br />
+
+            <input class="btn btn-success" type="submit" value="Salvar" />
+            &nbsp;
+            <a href="/medidores/index" class="btn btn-light btn-outline-dark">Voltar</a>
+            <br />
+        </form>
+    </div>
+</div> 

@@ -1,0 +1,64 @@
+﻿@model List<MedidorViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Medidores";
+}
+
+<h2>Medidores</h2>
+@if (ViewBag.AlertaErro != null)
+{
+    <span class="text-danger">@ViewBag.AlertaErro</span>
+}
+
+<div class="d-flex justify-content-center align-items-center mb-4 mt-4">
+    <label class="font-weight-bold">Filtrar por:</label>
+    <div class="d-flex gap-3 mr-2 ml-3">
+        <input type="number" placeholder="Id" class="form-control w-auto mr-2"/>
+        <input type="text" placeholder="Nome" class="form-control w-auto mr-2"/>
+    </div>
+    <div>
+        <a class="btn btn-info" href="#">Filtrar</a>
+        <a class="btn btn-dark" href="/Medidores/Create">Novo</a>
+    </div>
+</div>
+
+<table class="table table-bordered">
+    <tr>
+        <th class="col-1">Ações</th>
+        <th class="col-1">ID</th>
+        <th class="col-4">Nome</th>
+        <th class="col-2">Última Medição</th>
+    </tr>
+
+    @foreach (MedidorViewModel medidor in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Medidores/Edit?id=@medidor.Id"><img class="icone-crud mr-1" src="~/imgs/icone_lapis.png" /></a>
+                <a href="javascript:deletaMedidor(@medidor.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
+            </td>
+            <td>@medidor.Id</td>
+            <td>@medidor.Nome</td>
+            @if (medidor.DataUltimoRegistro == null)
+            {
+                <td class="font-italic">Sem registros</td>
+            }
+            else
+            {
+                <td>@medidor.DataUltimoRegistro?.ToLocalTime()</td>
+            }
+        </tr>
+    }
+</table>
+<style>
+    .icone-crud {
+        width: 1.1em;
+    }
+</style>
+<script>
+    function deletaMedidor(id) {
+        const deveDeletar = confirm('Tem certeza que deseja excluir este medidor?');
+        if (deveDeletar)
+            document.location.href = `/Medidores/Delete?id=${id}`;
+    }
+</script>

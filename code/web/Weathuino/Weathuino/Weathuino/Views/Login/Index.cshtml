@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="d-flex justify-content-center">
+    <div class="card p-4 shadow rounded-4" style="width: 100%; max-width: 400px;">
+        <div class="text-center mb-4">
+            <img src="~/imgs/logo_weathuino.png" alt="Logo do Site" class="img-fluid" style="max-width: 150px;">
+        </div>
+
+        <h4 class="text-center mb-3">Bem-vindo</h4>
+
+        <form>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" placeholder="seuemail@exemplo.com">
+            </div>
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
+            </div>
+            <div class="d-grid">
+                <a class="btn btn-block btn-warning" href="/Home">Entrar</a>
+            </div>
+        </form>
+    </div>
+</div>

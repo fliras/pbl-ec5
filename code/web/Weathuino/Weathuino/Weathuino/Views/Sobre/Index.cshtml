@@ -1,0 +1,22 @@
+﻿@model List<IntegranteViewModel>
+@{
+    ViewData["Title"] = "Sobre Nós";
+}
+
+<div class="container py-5">
+    <h1 class="text-center mb-4">Sobre Nós</h1>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>Nome</th>
+            <th>RM</th>
+        </tr>
+            @foreach (IntegranteViewModel integrante in Model)
+            {
+                <tr>
+                    <td>@integrante.Nome</td>
+                    <td>@integrante.RM</td>
+                </tr>
+            }
+    </table>
+</div>

@@ -1,0 +1,46 @@
+﻿@model UsuarioViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Usuários";
+}
+
+<h2 class="mb-4">Cadastro de Usuários</h2>
+
+<div class="row">
+    <div class="col-6">
+        <form action="Salvar" method="POST">
+            <input type="hidden" name="Operacao" value="@ViewBag.Operacao" />
+
+            <label for="Id" class="control-label">ID</label>
+            @if (ViewBag.Operacao == "I")
+            {
+                <input asp-for="Id" class="form-control" />
+            }
+            else
+            {
+                <input asp-for="Id" class="form-control" readonly />
+            }
+            <span asp-validation-for="Id" class="text-danger mb-3 d-block"></span>
+
+            <label for="Nome" class="control-label">Nome</label>
+            <input asp-for="Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger mb-3 d-block"></span>
+
+            <label for="Email" class="control-label">E-mail</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger mb-3 d-block"></span>
+
+            <label for="Senha" class="control-label">Senha</label>
+            <input type="password" asp-for="Senha" class="form-control" />
+            <span asp-validation-for="Senha" class="text-danger mb-3 d-block"></span>
+
+            <select asp-for="PerfilAcesso.Id" asp-items="ViewBag.PerfisAcesso" class="form-control"></select>
+            <span asp-validation-for="PerfilAcesso.Id" class="text-danger d-block mb-3"></span>
+
+            <input class="btn btn-success" type="submit" value="Salvar" />
+            &nbsp;
+            <a href="/usuarios/index" class="btn btn-light btn-outline-dark">Voltar</a>
+            <br />
+        </form>
+    </div>
+</div> 
