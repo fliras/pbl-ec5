@@ -61,6 +61,7 @@ namespace Weathuino.DAO
                     adapter.SelectCommand.CommandType = CommandType.StoredProcedure;
 
                     DataTable tabela = new DataTable();
+                    
                     adapter.Fill(tabela);
                     return tabela;
                 }

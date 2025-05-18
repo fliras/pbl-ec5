@@ -8,11 +8,6 @@ namespace Weathuino.DAO
 {
     public class UsuarioDAO : PadraoDAO<UsuarioViewModel>
     {
-
-
-
-
-
         protected override SqlParameter[] CriaParametros(UsuarioViewModel usuario)
         {
             return new SqlParameter[]
@@ -64,7 +59,8 @@ namespace Weathuino.DAO
         }
         protected override void SetTabela()
         {
-            Tabela = "usuario";
+            Tabela = "usuarios";
+            NomeSpListagem = "spConsultaUsuarios";
         }
     }
 }

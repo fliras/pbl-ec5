@@ -6,9 +6,8 @@ using Weathuino.Models;
 
 namespace Weathuino.DAO
 {
-    public class EstufaDAO: PadraoDAO<EstufaViewModel>
+    public class EstufaDAO : PadraoDAO<EstufaViewModel>
     {
-
         protected override SqlParameter[] CriaParametros(EstufaViewModel estufa)
         {
             SqlParameter[] parametros = new SqlParameter[6];
@@ -72,6 +71,7 @@ namespace Weathuino.DAO
         protected override void SetTabela()
         {
             Tabela = "estufas";
+            NomeSpListagem = "spConsultaEstufas";
         }
 
     }

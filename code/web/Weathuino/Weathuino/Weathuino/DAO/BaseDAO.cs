@@ -62,9 +62,9 @@ namespace Weathuino.DAO
         {
             var p = new SqlParameter[]
             {
-                new SqlParameter("tabela", Tabela),
-                new SqlParameter("Ordem", "1") // 1 é o primeiro campo da tabela
+                new SqlParameter("id", DBNull.Value),
             };
+
             var tabela = HelperDAO.ExecutaProcSelect(NomeSpListagem, p);
             List<T> lista = new List<T>();
             foreach (DataRow registro in tabela.Rows)
