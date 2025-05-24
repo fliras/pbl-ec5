@@ -1,109 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Weathuino.DAO;
 using Weathuino.Models;
 
 namespace Weathuino.Controllers
 {
-    public class EstufasController : Controller
+    public class EstufasController : PadraoController<EstufaViewModel>
     {
-        public IActionResult Index()
+        public EstufasController()
         {
-            EstufaDAO dao = new EstufaDAO();
-            return View(dao.Listagem());
+            DAO = new EstufaDAO();
+            GeraProximoId = true;
         }
 
-        public IActionResult Create()
+        protected override bool ValidaDados(EstufaViewModel estufa, string operacao)
         {
-            try
-            {
-                ViewBag.Operacao = "I";
-                EstufaDAO dao = new EstufaDAO();
-                int idLivre = dao.ProximoId();
-                PreparaComboMedidores();
-                return View("Form", new EstufaViewModel() { Id = idLivre });
-            }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel(ex.ToString()));
-            }
-        }
-
-        public IActionResult Edit(int id)
-        {
-            try
-            {
-                ViewBag.Operacao = "A";
-                EstufaDAO dao = new EstufaDAO();
-                EstufaViewModel estufa = dao.Consulta(id);
-
-                if (estufa == null)
-                    return View("Index");
-
-                PreparaComboMedidores();
-                return View("Form", estufa);
-
-            }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel(ex.ToString()));
-            }
-        }
-
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                EstufaDAO dao = new EstufaDAO();
-                dao.Delete(id);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                return View("Error", new ErrorViewModel(ex.ToString()));
-            }
-        }
-
-        public IActionResult Salvar(EstufaViewModel estufa, string operacao)
-        {
-            try
-            {
-                if (!ValidaDados(estufa, operacao))
-                {
-                    ViewBag.Operacao = operacao;
-                    PreparaComboMedidores();
-                    return View("Form", estufa);
-                }
-
-                EstufaDAO dao = new EstufaDAO();
-
-                if (operacao == "I")
-                    dao.Insert(estufa);
-                else
-                    dao.Update(estufa);
-
-                return RedirectToAction("Index");
-
-            }
-            catch (Exception erro)
-            {
-                return View("Error", new ErrorViewModel(erro.ToString()));
-            }
-        }
-
-        public bool ValidaDados(EstufaViewModel estufa, string operacao)
-        {
-            ModelState.Clear();
-            EstufaDAO dao = new EstufaDAO();
-
-            if (estufa.Id <= 0)
-                ModelState.AddModelError("Id", "Informe um ID válido!");
-            else if (operacao == "I" && dao.Consulta(estufa.Id) != null)
-                ModelState.AddModelError("Id", "Este ID já está em uso!");
-            else if (operacao == "A" && dao.Consulta(estufa.Id) == null)
-                ModelState.AddModelError("Id", "estufa não encontrada!");
+            bool validacaoBaseOK = base.ValidaDados(estufa, operacao);
+            if (!validacaoBaseOK) return false;
 
             if (string.IsNullOrEmpty(estufa.Nome))
                 ModelState.AddModelError("Nome", "Informe um nome!");
@@ -115,6 +28,12 @@ namespace Weathuino.Controllers
                 ModelState.AddModelError("Medidor.Id", "Escolha um medidor!");
 
             return ModelState.IsValid;
+        }
+
+        protected override void PreencheDadosParaView(string Operacao, EstufaViewModel model)
+        {
+            base.PreencheDadosParaView(Operacao, model);
+            PreparaComboMedidores();
         }
 
         private void PreparaComboMedidores()
