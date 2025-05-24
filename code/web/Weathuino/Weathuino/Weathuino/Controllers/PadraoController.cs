@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using Weathuino.Enums;
 using Weathuino.Models;
+using Weathuino.Utils;
 
 namespace Weathuino.Controllers
 {
@@ -54,7 +54,7 @@ namespace Weathuino.Controllers
             string dadosEmJSON = session.GetString("DadosSessao");
             if (dadosEmJSON.IsNullOrEmpty())
                 return null;
-            return JsonConvert.DeserializeObject<SessaoViewModel>(dadosEmJSON);
+            return JSONUtils.ConverteSringJSONParaObjeto<SessaoViewModel>(dadosEmJSON);
         }
     }
 }

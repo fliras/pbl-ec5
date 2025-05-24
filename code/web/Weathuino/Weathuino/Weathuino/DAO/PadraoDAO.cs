@@ -4,6 +4,7 @@ using System.Data;
 using System;
 using Weathuino.Models;
 using Newtonsoft.Json.Linq;
+using Weathuino.Utils;
 
 namespace Weathuino.DAO
 {
@@ -50,7 +51,7 @@ namespace Weathuino.DAO
         public List<T> ConsultaComFiltros(FiltrosViewModel filtros)
         {
             List<SqlParameter> parametros = new List<SqlParameter>();
-            JObject jsonDeFiltros = JObject.FromObject(filtros);
+            JObject jsonDeFiltros = JSONUtils.ConverteObjetoParaJSON(filtros);
             foreach (var filtro in jsonDeFiltros.Properties())
             {
                 object valorFiltro = filtro.Value.ToObject<object>();

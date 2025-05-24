@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Weathuino.DAO;
 using Weathuino.Models;
+using Weathuino.Utils;
 
 namespace Weathuino.Controllers
 {
@@ -40,7 +40,7 @@ namespace Weathuino.Controllers
 
         private void RegistraSessao(SessaoViewModel dadosSessao)
         {
-            string dadosSessaoEmJSON = JsonConvert.SerializeObject(dadosSessao);
+            string dadosSessaoEmJSON = JSONUtils.ConverteObjetoParaStringJSON(dadosSessao);
             HttpContext.Session.SetString("DadosSessao", dadosSessaoEmJSON);
             HttpContext.Session.SetString("Logado", "true");
         }
