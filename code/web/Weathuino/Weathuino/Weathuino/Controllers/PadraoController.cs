@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using Weathuino.DAO;
 using Weathuino.Models;
 
@@ -105,7 +106,7 @@ namespace Weathuino.Controllers
             }
         }
 
-        public IActionResult Delete(int id)
+        public virtual IActionResult Delete(int id)
         {
             try
             {
