@@ -1,0 +1,35 @@
+﻿@model List<MedidorViewModel>
+
+<table class="table table-bordered">
+    <tr>
+        <th class="col-1">Ações</th>
+        <th class="col-1">ID</th>
+        <th class="col-4">Nome</th>
+        <th class="col-2">Última Medição</th>
+    </tr>
+
+    @foreach (MedidorViewModel medidor in Model)
+    {
+        <tr>
+            <td>
+                <a href="/Medidores/Edit?id=@medidor.Id"><img class="icone-crud mr-1" src="~/imgs/icone_lapis.png" /></a>
+                <a href="javascript:deletaMedidor(@medidor.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
+            </td>
+            <td>@medidor.Id</td>
+            <td>@medidor.Nome</td>
+            @if (medidor.DataUltimoRegistro == null)
+            {
+                <td class="font-italic">Sem registros</td>
+            }
+            else
+            {
+                <td>@medidor.DataUltimoRegistro?.ToLocalTime()</td>
+            }
+        </tr>
+    }
+</table>
+<style>
+    .icone-crud {
+        width: 1.1em;
+    }
+</style>
