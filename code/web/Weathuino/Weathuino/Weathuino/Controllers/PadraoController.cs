@@ -5,7 +5,7 @@ using Weathuino.Models;
 
 namespace Weathuino.Controllers
 {
-    public class PadraoController<T> : Controller where T : BaseViewModel
+    public class PadraoController<T> : Controller where T : PadraoViewModel
     {
         protected PadraoDAO<T> DAO { get; set; }
         protected bool GeraProximoId { get; set; }

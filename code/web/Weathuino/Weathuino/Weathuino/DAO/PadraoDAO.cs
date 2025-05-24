@@ -6,7 +6,7 @@ using Weathuino.Models;
 
 namespace Weathuino.DAO
 {
-    public abstract class PadraoDAO<T> where T : BaseViewModel
+    public abstract class PadraoDAO<T> where T : PadraoViewModel
     {
         public PadraoDAO()
         {

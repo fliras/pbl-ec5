@@ -1,6 +1,6 @@
 ﻿namespace Weathuino.Models
 {
-    public class UsuarioViewModel : BaseViewModel
+    public class UsuarioViewModel : PadraoViewModel
     {
         public string Nome { get; set; }
         public string Email { get; set; }

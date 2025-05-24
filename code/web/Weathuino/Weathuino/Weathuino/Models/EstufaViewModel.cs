@@ -1,6 +1,6 @@
 ﻿namespace Weathuino.Models
 {
-    public class EstufaViewModel: BaseViewModel
+    public class EstufaViewModel: PadraoViewModel
     {
         public string Nome { get; set; }
         public string Descricao { get; set; }
