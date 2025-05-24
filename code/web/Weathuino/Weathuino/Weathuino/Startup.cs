@@ -53,7 +53,7 @@ namespace Weathuino
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Login}/{action=Index}/{id?}");
+                    pattern: "{controller=Autenticacao}/{action=Index}/{id?}");
             });
 
         }

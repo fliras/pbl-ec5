@@ -31,16 +31,23 @@ namespace Weathuino.DAO
             return BCrypt.Net.BCrypt.Verify(senha, hashSenha);
         }
 
-        public bool RealizaLogin(string email, string senha)
+        public SessaoViewModel RealizaLogin(string email, string senha)
         {
             FiltrosUsuarioViewModel filtroEmail = new FiltrosUsuarioViewModel { Email = email };
             List<UsuarioViewModel> usuariosFiltrados = ConsultaComFiltros(filtroEmail);
             if (usuariosFiltrados.Count == 0)
-                return false;
+                return null;
 
             UsuarioViewModel usuarioDoEmail = usuariosFiltrados[0];
             bool senhaValida = ValidaHashBcrypt(senha, usuarioDoEmail.Senha);
-            return senhaValida;
+            if (!senhaValida)
+                return null;
+
+            return new SessaoViewModel
+            {
+                IdUsuario = usuarioDoEmail.Id,
+                PerfilAcesso = usuarioDoEmail.PerfilAcesso
+            };
         }
 
         protected override UsuarioViewModel MontaModel(DataRow row)
