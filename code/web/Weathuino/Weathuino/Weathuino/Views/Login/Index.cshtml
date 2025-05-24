@@ -10,18 +10,20 @@
 
         <h4 class="text-center mb-3">Bem-vindo</h4>
 
-        <form>
+        <form action="/Login/FazLogin" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" placeholder="seuemail@exemplo.com">
+                <input type="email" class="form-control" id="email" name="email" placeholder="seuemail@exemplo.com">
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
+                <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha">
             </div>
             <div class="d-grid">
-                <a class="btn btn-block btn-warning" href="/Home">Entrar</a>
+                <input type="submit" class="btn btn-block btn-warning" value="Entrar" />
             </div>
         </form>
+        <br />
+        <span class="text-danger text-center">@ViewBag.ErroLogin</span>
     </div>
 </div>

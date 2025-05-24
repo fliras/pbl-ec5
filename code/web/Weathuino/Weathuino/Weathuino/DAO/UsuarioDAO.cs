@@ -3,6 +3,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Weathuino.Models;
 using Weathuino.Enums;
+using System.Collections.Generic;
 
 namespace Weathuino.DAO
 {
@@ -22,7 +23,24 @@ namespace Weathuino.DAO
 
         private string CriaHashBcrypt(string texto)
         {
-            return BCrypt.Net.BCrypt.EnhancedHashPassword(texto, 13);
+            return BCrypt.Net.BCrypt.HashPassword(texto);
+        }
+
+        private bool ValidaHashBcrypt(string senha, string hashSenha)
+        {
+            return BCrypt.Net.BCrypt.Verify(senha, hashSenha);
+        }
+
+        public bool RealizaLogin(string email, string senha)
+        {
+            FiltrosUsuarioViewModel filtroEmail = new FiltrosUsuarioViewModel { Email = email };
+            List<UsuarioViewModel> usuariosFiltrados = ConsultaComFiltros(filtroEmail);
+            if (usuariosFiltrados.Count == 0)
+                return false;
+
+            UsuarioViewModel usuarioDoEmail = usuariosFiltrados[0];
+            bool senhaValida = ValidaHashBcrypt(senha, usuarioDoEmail.Senha);
+            return senhaValida;
         }
 
         protected override UsuarioViewModel MontaModel(DataRow row)

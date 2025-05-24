@@ -125,16 +125,28 @@ DROP PROCEDURE IF EXISTS spConsulta_usuarios
 GO
 CREATE PROCEDURE spConsulta_usuarios
 (
-	@id INTEGER
+	@id INTEGER = null,
+	@email VARCHAR(MAX) = null,
+	@nome VARCHAR(MAX) = null,
+	@idPerfil INTEGER = null
 )
 AS
 BEGIN
 	DECLARE @query VARCHAR(MAX) = 'SELECT u.id idUsuario, u.nome nomeUsuario, u.email emailUsuario, '
 	    + 'u.senha senhaUsuario, pa.id idPerfilAcesso FROM usuarios u '
-		+ 'INNER JOIN perfisAcesso pa ON pa.id = u.id_perfil_acesso ';
+		+ 'INNER JOIN perfisAcesso pa ON pa.id = u.id_perfil_acesso WHERE 1=1';
 
 	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + 'WHERE u.id = ' + CAST(@id as VARCHAR(MAX));
+		SET @query = @query + ' AND u.id = ' + CAST(@id as VARCHAR(MAX));
+
+	IF @nome IS NOT NULL
+		SET @query = @query + ' AND u.nome = ''' + @nome + '''';
+
+	IF @email IS NOT NULL
+		SET @query = @query + ' AND u.email = ''' + @email + '''';
+
+	IF ISNULL(@idPerfil, 0) <> 0
+		SET @query = @query + ' AND pa.id = ' + CAST(@idPerfil as VARCHAR(MAX));
 	
 	EXEC(@query);
 END
