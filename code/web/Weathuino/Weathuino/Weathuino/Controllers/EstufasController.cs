@@ -10,7 +10,6 @@ namespace Weathuino.Controllers
         public EstufasController()
         {
             DAO = new EstufaDAO();
-            GeraProximoId = true;
         }
 
         protected override bool ValidaDados(EstufaViewModel estufa, string operacao)

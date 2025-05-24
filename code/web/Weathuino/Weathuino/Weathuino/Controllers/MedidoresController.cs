@@ -10,7 +10,6 @@ namespace Weathuino.Controllers
         public MedidoresController()
         {
             DAO = new MedidorDAO();
-            GeraProximoId = true;
         }
 
         public override IActionResult Delete(int id)

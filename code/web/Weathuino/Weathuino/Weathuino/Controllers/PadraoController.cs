@@ -8,7 +8,7 @@ namespace Weathuino.Controllers
     public class PadraoController<T> : Controller where T : PadraoViewModel
     {
         protected PadraoDAO<T> DAO { get; set; }
-        protected bool GeraProximoId { get; set; }
+        protected bool GeraProximoId { get; set; } = true;
         protected string NomeViewIndex { get; set; } = "index";
         protected string NomeViewForm { get; set; } = "form";
 

@@ -8,7 +8,6 @@ namespace Weathuino.Controllers
         public UsuariosController()
         {
             DAO = new UsuarioDAO();
-            GeraProximoId = true;
         }
 
         protected override bool ValidaDados(UsuarioViewModel usuario, string operacao)
