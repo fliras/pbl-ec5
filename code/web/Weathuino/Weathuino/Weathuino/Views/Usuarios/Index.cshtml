@@ -21,6 +21,12 @@
 
 <div id="dadosUsuarios"></div>
 <script >
+    function deletaRegistro(id) {
+        const deveDeletar = confirm('Tem certeza que deseja excluir este registro?');
+        if (deveDeletar)
+            document.location.href = `/Usuarios/Delete?id=${id}`;
+    }
+
     function filtraUsuarios() {
         const id = document.getElementById('id').value;
         const nome = document.getElementById('nome').value;
