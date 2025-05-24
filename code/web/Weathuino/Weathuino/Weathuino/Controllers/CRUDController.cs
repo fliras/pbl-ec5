@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using Weathuino.DAO;
 using Weathuino.Models;
 
@@ -109,6 +110,19 @@ namespace Weathuino.Controllers
                 return View("Error", new ErrorViewModel(erro.ToString()));
             }
 
+        }
+
+        public IActionResult ConsultaComFiltros(FiltrosViewModel filtros)
+        {
+            try
+            {
+                List<T> registrosFiltrados = DAO.ConsultaComFiltros(filtros);
+                return PartialView("pvGrid", registrosFiltrados);
+            }
+            catch (Exception error)
+            {
+                return Json(new { erro = true, msg = error.Message });
+            }
         }
     }
 }

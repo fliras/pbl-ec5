@@ -33,7 +33,7 @@ namespace Weathuino.DAO
 
         public SessaoViewModel RealizaLogin(string email, string senha)
         {
-            FiltrosUsuarioViewModel filtroEmail = new FiltrosUsuarioViewModel { Email = email };
+            FiltrosViewModel filtroEmail = new FiltrosViewModel { Email = email };
             List<UsuarioViewModel> usuariosFiltrados = ConsultaComFiltros(filtroEmail);
             if (usuariosFiltrados.Count == 0)
                 return null;

@@ -39,18 +39,5 @@ namespace Weathuino.Controllers
         {
             base.PreencheDadosParaView(Operacao, model);
         }
-
-        public IActionResult ConsultaComFiltros(FiltrosUsuarioViewModel filtros)
-        {
-            try
-            {
-                List<UsuarioViewModel> usuariosFiltrados = DAO.ConsultaComFiltros(filtros);
-                return PartialView("pvGridUsuarios", usuariosFiltrados);
-            }
-            catch (Exception error)
-            {
-                return Json(new { erro = true, msg = error.Message });
-            }
-        }
     }
 }
