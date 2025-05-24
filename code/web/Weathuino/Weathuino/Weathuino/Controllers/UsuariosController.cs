@@ -1,5 +1,6 @@
 ﻿using Weathuino.DAO;
 using Weathuino.Models;
+using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
@@ -8,6 +9,7 @@ namespace Weathuino.Controllers
         public UsuariosController()
         {
             DAO = new UsuarioDAO();
+            AcessoExigido = PerfisAcesso.ADMIN;
         }
 
         protected override bool ValidaDados(UsuarioViewModel usuario, string operacao)

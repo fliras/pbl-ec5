@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using Weathuino.DAO;
+using Weathuino.Enums;
 using Weathuino.Models;
 
 namespace Weathuino.Controllers
@@ -10,7 +11,7 @@ namespace Weathuino.Controllers
     {
         protected PadraoDAO<T> DAO { get; set; }
         protected bool GeraProximoId { get; set; } = true;
-        protected bool ExigeAutenticacao { get; set; } = true;
+        protected PerfisAcesso? AcessoExigido { get; set; }
         protected string NomeViewIndex { get; set; } = "index";
         protected string NomeViewForm { get; set; } = "form";
 
@@ -115,12 +116,26 @@ namespace Weathuino.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (ExigeAutenticacao && !HelpersControllers.VerificaSeUsuarioEstaLogado(HttpContext.Session))
-                context.Result = RedirectToAction("Index", "Login");
-            else
+            if (AcessoExigido == null)
             {
                 ViewBag.Logado = true;
                 base.OnActionExecuting(context);
+            }
+            else
+            {
+                SessaoViewModel dadosSessao = HelpersControllers.ObtemDadosDaSessao(HttpContext.Session);
+                bool usuarioTemPermissao = dadosSessao != null && dadosSessao.PerfilAcesso >= AcessoExigido;
+
+                if (usuarioTemPermissao)
+                {
+                    ViewBag.Logado = true;
+                    ViewBag.DadosSessao = dadosSessao;
+                    base.OnActionExecuting(context);
+                }
+                else
+                {
+                    context.Result = RedirectToAction("Index", "Autenticacao");
+                }
             }
         }
     }

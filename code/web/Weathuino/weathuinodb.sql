@@ -3,7 +3,6 @@
 -------------------------------------------------
 USE master;
 
-
 DROP DATABASE IF EXISTS weathuinodb;
 GO
 
@@ -59,13 +58,13 @@ GO
 -- SEEDS
 -------------------------------------------------
 INSERT INTO perfisAcesso (nome) VALUES
-('ADMIN'),
-('COMUM');
+('COMUM'),
+('ADMIN');
 
 INSERT INTO usuarios (id, nome, email, senha, id_perfil_acesso) VALUES
-(1, 'Alice Admin', 'alice@admin.com', '$2b$12$e0NRSCpq4u1fE0E0eAa0euMtD57yQrbAYBsbzYhS.f61QIQhQKOwa', 1), -- senha: admin123
-(2, 'Bob', 'bob@user.com', '$2b$12$JQkFqD1UpWlNgdo7AKzleuYq/XuzM1ORC9cfyP7Kx6E6l8VUkghzK', 2),  -- senha: user123
-(3, 'Carol', 'carol@guest.com', '$2b$12$9gZByVXz2W2GT7KUYGNeWeqK0RSgS.y.AK2jlBDmF5SC2a2A9hvCi', 2); -- senha: visit123
+(1, 'Alice Admin', 'alice@admin.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 1), -- senha: admin123
+(2, 'Bob', 'bob@user.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2),  -- senha: user123
+(3, 'Carol', 'carol@guest.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2); -- senha: visit123
 
 INSERT INTO medidores (id, nome, data_ultimo_registro) VALUES
 (1, 'Medidor Alpha', CURRENT_TIMESTAMP),

@@ -2,7 +2,7 @@
 {
     public enum PerfisAcesso
     {
-        ADMIN = 1,
-        COMUM,
+        COMUM = 1,
+        ADMIN,
     }
 }
