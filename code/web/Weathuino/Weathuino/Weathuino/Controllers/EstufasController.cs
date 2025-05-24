@@ -40,7 +40,7 @@ namespace Weathuino.Controllers
         private void PreparaComboMedidores()
         {
             MedidorDAO dao = new MedidorDAO();
-            List<MedidorViewModel> medidores = dao.Listagem();
+            List<MedidorViewModel> medidores = dao.ObtemTodos();
             List<SelectListItem> listMedidores = new List<SelectListItem>();
 
             listMedidores.Add(new SelectListItem("Selecione um medidor...", "0"));

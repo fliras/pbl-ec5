@@ -10,41 +10,21 @@ namespace Weathuino.DAO
     {
         protected override SqlParameter[] CriaParametros(EstufaViewModel estufa)
         {
-            SqlParameter[] parametros = new SqlParameter[6];
-            parametros[0] = new SqlParameter("id", estufa.Id);
-            parametros[1] = new SqlParameter("nome", estufa.Nome);
-            parametros[2] = new SqlParameter("descricao", estufa.Descricao);
+            List<SqlParameter> parametros = new List<SqlParameter>
+            {
+                new SqlParameter("id", estufa.Id),
+                new SqlParameter("nome", estufa.Nome),
+                new SqlParameter("descricao", estufa.Descricao),
+                new SqlParameter("idMedidor", estufa.Medidor.Id)
+            };
 
             if (estufa.TemperaturaMinima != null)
-                parametros[3] = new SqlParameter("temperaturaMin", estufa.TemperaturaMinima);
-            else
-                parametros[3] = new SqlParameter("temperaturaMin", DBNull.Value);
+                parametros.Add(new SqlParameter("temperaturaMin", estufa.TemperaturaMinima));
 
             if (estufa.TemperaturaMaxima != null)
-                parametros[4] = new SqlParameter("temperaturaMax", estufa.TemperaturaMaxima);
-            else
-                parametros[4] = new SqlParameter("temperaturaMax", DBNull.Value);
+                parametros.Add(new SqlParameter("temperaturaMax", estufa.TemperaturaMaxima));
 
-            parametros[5] = new SqlParameter("idMedidor", estufa.Medidor.Id);
-
-            return parametros;
-        }
-
-        private SqlParameter[] CriaParametrosConsulta(int id = 0)
-        {
-            if (id == 0)
-                return new SqlParameter[] { new SqlParameter("id", DBNull.Value) };
-            else
-                return new SqlParameter[] { new SqlParameter("id", id) };
-        }
-
-        private SqlParameter[] CriaParametrosDelete(string nomeTabela, int idRegistro)
-        {
-            return new SqlParameter[]
-            {
-                new SqlParameter("tabela", nomeTabela),
-                new SqlParameter("id", idRegistro)
-            };
+            return parametros.ToArray();
         }
 
         protected override EstufaViewModel MontaModel(DataRow row)

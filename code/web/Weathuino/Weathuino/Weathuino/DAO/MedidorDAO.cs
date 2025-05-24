@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Weathuino.Models;
@@ -8,14 +7,10 @@ namespace Weathuino.DAO
 {
     public class MedidorDAO : PadraoDAO<MedidorViewModel>
     {
-        public void DeletaPorID(int id)
-        {
-            HelperDAO.ExecutaProc("spDelete", CriaParametrosDelete("medidores", id));
-        }
-
         public bool VerificaSeMedidorEstaEmUso(int id)
         {
-            DataTable dados = HelperDAO.ExecutaProcSelect("spVerificaUsoMedidor", CriaParametrosConsulta(id));
+            SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("id", id) };
+            DataTable dados = HelperDAO.ExecutaProcSelect("spVerificaUsoMedidor", parametros);
             if (dados.Rows.Count == 0) return false;
             bool estaEmUso = Convert.ToBoolean(dados.Rows[0]["estaEmUso"]);
             return estaEmUso;
@@ -28,24 +23,6 @@ namespace Weathuino.DAO
                 new SqlParameter("id", medidor.Id),
                 new SqlParameter("nome", medidor.Nome)
             };
-        }
-
-
-        private SqlParameter[] CriaParametrosDelete(string nomeTabela, int idRegistro)
-        {
-            return new SqlParameter[]
-            {
-                new SqlParameter("tabela", nomeTabela),
-                new SqlParameter("id", idRegistro)
-            };
-        }
-
-        private SqlParameter[] CriaParametrosConsulta(int id = 0)
-        {
-            if (id == 0)
-                return new SqlParameter[] { new SqlParameter("id", DBNull.Value) };
-            else
-                return new SqlParameter[] { new SqlParameter("id", id) };
         }
 
         protected override MedidorViewModel MontaModel(DataRow row)

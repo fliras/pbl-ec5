@@ -23,10 +23,10 @@ namespace Weathuino.Controllers
                 if (medidorEmUso)
                 {
                     ViewBag.AlertaErro = "Este medidor não pode ser excluído pois já está em uso!";
-                    return View("Index", dao.Listagem());
+                    return View("Index", dao.ObtemTodos());
                 }
 
-                dao.DeletaPorID(id);
+                dao.Delete(id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

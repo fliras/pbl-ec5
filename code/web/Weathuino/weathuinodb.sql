@@ -160,8 +160,8 @@ CREATE PROCEDURE spInsere_estufas
 	@id INTEGER,
 	@nome VARCHAR(100),
 	@descricao VARCHAR(200),
-	@temperaturaMin DECIMAL(5,2),
-	@temperaturaMax DECIMAL(5,2),
+	@temperaturaMin DECIMAL(5,2) = NULL,
+	@temperaturaMax DECIMAL(5,2) = NULL,
 	@idMedidor INTEGER
 )
 AS
@@ -178,8 +178,8 @@ CREATE PROCEDURE spAltera_estufas
 	@id INTEGER,
 	@nome VARCHAR(100),
 	@descricao VARCHAR(200),
-	@temperaturaMin DECIMAL(5,2),
-	@temperaturaMax DECIMAL(5,2),
+	@temperaturaMin DECIMAL(5,2) = NULL,
+	@temperaturaMax DECIMAL(5,2) = NULL,
 	@idMedidor INTEGER
 )
 AS
@@ -198,16 +198,24 @@ DROP PROCEDURE IF EXISTS spConsulta_estufas
 GO
 CREATE PROCEDURE spConsulta_estufas
 (
-	@id INTEGER
+	@id INTEGER = NULL,
+	@nome VARCHAR(MAX) = NULL,
+	@descricao VARCHAR(MAX) = null
 )
 AS
 BEGIN
 	DECLARE @query VARCHAR(MAX) = 'SELECT e.id idEstufa, e.nome nomeEstufa, e.descricao descricaoEstufa, '
 	    + 'e.temperatura_min tempMinEstufa, e.temperatura_max tempMaxEstufa, m.id idMedidor, m.nome nomeMedidor FROM estufas e '
-		+ 'INNER JOIN medidores m ON m.id = e.id_medidor ';
+		+ 'INNER JOIN medidores m ON m.id = e.id_medidor WHERE 1=1 ';
 
 	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + 'WHERE e.id = ' + CAST(@id as VARCHAR(MAX));
+		SET @query = @query + ' AND e.id = ' + CAST(@id as VARCHAR(MAX));
+
+	IF @nome IS NOT NULL
+		SET @query = @query + ' AND e.nome = ''' + @nome + '''';
+
+	IF @descricao IS NOT NULL
+		SET @query = @query + ' AND e.descricao = ''' + @descricao + '''';
 	
 	EXEC(@query);
 END
@@ -247,14 +255,18 @@ DROP PROCEDURE IF EXISTS spConsulta_medidores
 GO
 CREATE PROCEDURE spConsulta_medidores
 (
-	@id INTEGER
+	@id INTEGER = null,
+	@nome VARCHAR(MAX) = null
 )
 AS
 BEGIN
-	DECLARE @query VARCHAR(MAX) = 'SELECT m.id idMedidor, m.nome nomeMedidor, m.data_ultimo_registro ultimoRegistroMedidor FROM medidores m ';
+	DECLARE @query VARCHAR(MAX) = 'SELECT m.id idMedidor, m.nome nomeMedidor, m.data_ultimo_registro ultimoRegistroMedidor FROM medidores m WHERE 1=1';
 
 	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + 'WHERE m.id = ' + CAST(@id as VARCHAR(MAX));
+		SET @query = @query + ' AND m.id = ' + CAST(@id as VARCHAR(MAX));
+
+	IF @nome IS NOT NULL
+		SET @query = @query + ' AND m.nome = ''' + @nome + '''';
 	
 	EXEC(@query);
 END

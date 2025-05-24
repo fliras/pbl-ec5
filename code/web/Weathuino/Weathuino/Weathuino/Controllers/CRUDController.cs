@@ -16,7 +16,7 @@ namespace Weathuino.Controllers
         {
             try
             {
-                var lista = DAO.Listagem();
+                var lista = DAO.ObtemTodos();
                 return View(NomeViewIndex, lista);
             }
             catch (Exception erro)
@@ -43,7 +43,7 @@ namespace Weathuino.Controllers
         protected virtual void PreencheDadosParaView(string Operacao, T model)
         {
             if (GeraProximoId && Operacao == "I")
-                model.Id = DAO.ProximoId();
+                model.Id = DAO.GeraProximoID();
         }
 
         public virtual IActionResult Save(T model, string Operacao)
@@ -82,7 +82,7 @@ namespace Weathuino.Controllers
             try
             {
                 ViewBag.Operacao = "A";
-                var model = DAO.Consulta(id);
+                var model = DAO.ObtemPorID(id);
                 if (model == null)
                     return RedirectToAction(NomeViewIndex);
                 else

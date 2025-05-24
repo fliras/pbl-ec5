@@ -49,7 +49,7 @@ namespace Weathuino.DAO
             }
         }
 
-        public static DataTable ExecutaProcSelect(string nomeProc, SqlParameter[] parametros)
+        public static DataTable ExecutaProcSelect(string nomeProc, SqlParameter[] parametros = null)
         {
             using (SqlConnection conexao = ConexaoBD.GetConexao())
             {
