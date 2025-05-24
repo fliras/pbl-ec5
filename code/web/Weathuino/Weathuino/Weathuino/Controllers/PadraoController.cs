@@ -11,6 +11,7 @@ namespace Weathuino.Controllers
         protected bool GeraProximoId { get; set; }
         protected string NomeViewIndex { get; set; } = "index";
         protected string NomeViewForm { get; set; } = "form";
+
         public virtual IActionResult Index()
         {
             try
@@ -23,6 +24,7 @@ namespace Weathuino.Controllers
                 return View("Error", new ErrorViewModel(erro.ToString()));
             }
         }
+
         public virtual IActionResult Create()
         {
             try
@@ -37,11 +39,13 @@ namespace Weathuino.Controllers
                 return View("Error", new ErrorViewModel(erro.ToString()));
             }
         }
+
         protected virtual void PreencheDadosParaView(string Operacao, T model)
         {
             if (GeraProximoId && Operacao == "I")
                 model.Id = DAO.ProximoId();
         }
+
         public virtual IActionResult Save(T model, string Operacao)
         {
             try
@@ -68,7 +72,8 @@ namespace Weathuino.Controllers
                 return View("Error", new ErrorViewModel(erro.ToString()));
             }
         }
-        protected virtual void ValidaDados(T model, string operacao)
+
+        protected virtual bool ValidaDados(T model, string operacao)
         {
             ModelState.Clear();
             if (operacao == "I" && DAO.Consulta(model.Id) != null)
@@ -77,7 +82,9 @@ namespace Weathuino.Controllers
                 ModelState.AddModelError("Id", "Este registro não existe!");
             if (model.Id <= 0)
                 ModelState.AddModelError("Id", "Id inválido!");
+            return ModelState.IsValid;
         }
+
         public IActionResult Edit(int id)
         {
             try
@@ -97,6 +104,7 @@ namespace Weathuino.Controllers
                 return View("Error", new ErrorViewModel(erro.ToString()));
             }
         }
+
         public IActionResult Delete(int id)
         {
             try
@@ -111,5 +119,4 @@ namespace Weathuino.Controllers
 
         }
     }
-
 }
