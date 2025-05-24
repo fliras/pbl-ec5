@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Weathuino.Models;
 using Weathuino.Enums;
 using System.Collections.Generic;
+using Weathuino.Utils;
 
 namespace Weathuino.DAO
 {
@@ -16,19 +17,9 @@ namespace Weathuino.DAO
                 new SqlParameter("id", usuario.Id),
                 new SqlParameter("nome", usuario.Nome),
                 new SqlParameter("email", usuario.Email),
-                new SqlParameter("senha", CriaHashBcrypt(usuario.Senha)),
+                new SqlParameter("senha", BCryptUtils.CriaHashBcrypt(usuario.Senha)),
                 new SqlParameter("perfilUsuario", usuario.PerfilAcesso)
             };
-        }
-
-        private string CriaHashBcrypt(string texto)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(texto);
-        }
-
-        private bool ValidaHashBcrypt(string senha, string hashSenha)
-        {
-            return BCrypt.Net.BCrypt.Verify(senha, hashSenha);
         }
 
         public SessaoViewModel RealizaLogin(string email, string senha)
@@ -39,7 +30,7 @@ namespace Weathuino.DAO
                 return null;
 
             UsuarioViewModel usuarioDoEmail = usuariosFiltrados[0];
-            bool senhaValida = ValidaHashBcrypt(senha, usuarioDoEmail.Senha);
+            bool senhaValida = BCryptUtils.ValidaHashBcrypt(senha, usuarioDoEmail.Senha);
             if (!senhaValida)
                 return null;
 
