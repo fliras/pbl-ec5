@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using Weathuino.DAO;
 using Weathuino.Models;
 
@@ -50,23 +49,20 @@ namespace Weathuino.Controllers
         public virtual IActionResult Save(T model, string Operacao)
         {
             try
-
             {
-                ValidaDados(model, Operacao);
-                if (ModelState.IsValid == false)
+                if (!ValidaDados(model, Operacao))
                 {
                     ViewBag.Operacao = Operacao;
                     PreencheDadosParaView(Operacao, model);
                     return View(NomeViewForm, model);
                 }
+
+                if (Operacao == "I")
+                    DAO.Insert(model);
                 else
-                {
-                    if (Operacao == "I")
-                        DAO.Insert(model);
-                    else
-                        DAO.Update(model);
-                    return RedirectToAction(NomeViewIndex);
-                }
+                    DAO.Update(model);
+
+                return RedirectToAction(NomeViewIndex);
             }
             catch (Exception erro)
             {
@@ -74,16 +70,11 @@ namespace Weathuino.Controllers
             }
         }
 
+        // Atualmente não há validações comuns para todas as controllers, apenas a rotina de limpar o ModelState.
         protected virtual bool ValidaDados(T model, string operacao)
         {
             ModelState.Clear();
-            if (operacao == "I" && DAO.Consulta(model.Id) != null)
-                ModelState.AddModelError("Id", "Código já está em uso!");
-            if (operacao == "A" && DAO.Consulta(model.Id) == null)
-                ModelState.AddModelError("Id", "Este registro não existe!");
-            if (model.Id <= 0)
-                ModelState.AddModelError("Id", "Id inválido!");
-            return ModelState.IsValid;
+            return true;
         }
 
         public IActionResult Edit(int id)
