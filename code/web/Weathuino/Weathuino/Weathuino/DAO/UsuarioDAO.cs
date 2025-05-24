@@ -17,7 +17,7 @@ namespace Weathuino.DAO
                 new SqlParameter("nome", usuario.Nome),
                 new SqlParameter("email", usuario.Email),
                 new SqlParameter("senha", CriaHashBcrypt(usuario.Senha)),
-                new SqlParameter("perfilAcesso", usuario.PerfilAcesso)
+                new SqlParameter("perfilUsuario", usuario.PerfilAcesso)
             };
         }
 
