@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    @if (ViewBag.Logado != null && ViewBag.Logado)
+    @if (!@ViewData["Title"].Equals("Login"))
     {
         <header>
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">

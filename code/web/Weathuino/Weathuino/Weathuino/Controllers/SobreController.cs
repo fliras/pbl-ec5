@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Weathuino.Models;
 
 namespace Weathuino.Controllers
 {
-    public class SobreController : Controller
+    public class SobreController : PadraoController
     {
         private List<IntegranteViewModel> _integrantes = new List<IntegranteViewModel>()
         {
@@ -15,10 +16,16 @@ namespace Weathuino.Controllers
             new IntegranteViewModel { Nome = "Vitor Malvão", RM = "081230020" },
         };
 
-        public IActionResult Index()
+        public override IActionResult Index()
         {
-            
-            return View(_integrantes);
+            try
+            {
+                return View(_integrantes);
+            }
+            catch (Exception error)
+            {
+                return View("Error", new ErrorViewModel(error.ToString()));
+            }
         }
     }
 }

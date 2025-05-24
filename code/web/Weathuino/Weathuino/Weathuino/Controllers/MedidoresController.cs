@@ -6,7 +6,7 @@ using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
-    public class MedidoresController : PadraoController<MedidorViewModel>
+    public class MedidoresController : CRUDController<MedidorViewModel>
     {
         public MedidoresController()
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -7,32 +8,34 @@ using Weathuino.Models;
 
 namespace Weathuino.Controllers
 {
-    public class AutenticacaoController : Controller
+    public class AutenticacaoController : PadraoController
     {
-        private UsuarioDAO usuarioDAO = new UsuarioDAO();
-
-        public IActionResult Index()
-        {
-            return View("Index");
-        }
+        private readonly UsuarioDAO _usuarioDAO = new UsuarioDAO();
 
         public IActionResult Login(string email, string senha)
         {
-            if (email.IsNullOrEmpty() || senha.IsNullOrEmpty())
+            try
             {
-                ViewBag.ErroLogin = "Informe email e senha!";
-                return View("Index");
-            }
+                if (email.IsNullOrEmpty() || senha.IsNullOrEmpty())
+                {
+                    ViewBag.ErroLogin = "Informe email e senha!";
+                    return View("Index");
+                }
 
-            SessaoViewModel sessao = usuarioDAO.RealizaLogin(email, senha);
-            if (sessao == null)
+                SessaoViewModel sessao = _usuarioDAO.RealizaLogin(email, senha);
+                if (sessao == null)
+                {
+                    ViewBag.ErroLogin = "Usuário ou senha inválidos!";
+                    return View("Index");
+                }
+
+                RegistraSessao(sessao);
+                return RedirectToAction("index", "Home");
+            }
+            catch (Exception error)
             {
-                ViewBag.ErroLogin = "Usuário ou senha inválidos!";
-                return View("Index");
+                return View("Error", new ErrorViewModel(error.ToString()));
             }
-
-            RegistraSessao(sessao);
-            return RedirectToAction("index", "Home");
         }
 
         private void RegistraSessao(SessaoViewModel dadosSessao)
@@ -44,8 +47,15 @@ namespace Weathuino.Controllers
 
         public IActionResult Logoff()
         {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index");
+            try
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Index");
+            }
+            catch (Exception error)
+            {
+                return View("Error", new ErrorViewModel(error.ToString()));
+            }
         }
     }
 }

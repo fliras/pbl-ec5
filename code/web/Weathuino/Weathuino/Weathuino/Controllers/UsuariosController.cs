@@ -4,7 +4,7 @@ using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
-    public class UsuariosController : PadraoController<UsuarioViewModel>
+    public class UsuariosController : CRUDController<UsuarioViewModel>
     {
         public UsuariosController()
         {
