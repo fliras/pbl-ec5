@@ -115,7 +115,7 @@ namespace Weathuino.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (ExigeAutenticacao && !HelpersControllers.VerificaUserLogado(HttpContext.Session))
+            if (ExigeAutenticacao && !HelpersControllers.VerificaSeUsuarioEstaLogado(HttpContext.Session))
                 context.Result = RedirectToAction("Index", "Login");
             else
             {

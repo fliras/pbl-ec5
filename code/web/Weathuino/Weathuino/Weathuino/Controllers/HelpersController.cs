@@ -4,13 +4,9 @@ namespace Weathuino.Controllers
 {
     public class HelpersControllers
     {
-        public static bool VerificaUserLogado(ISession session)
+        public static bool VerificaSeUsuarioEstaLogado(ISession session)
         {
-            string logado = session.GetString("Logado");
-            if (logado == null)
-                return false;
-            else
-                return true;
+            return session.GetString("Logado") != null;
         }
     }
 }
