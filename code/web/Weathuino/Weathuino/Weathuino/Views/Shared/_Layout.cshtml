@@ -20,28 +20,29 @@
                             aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                        <ul class="navbar-nav flex-grow-1">
-                            @if (ViewBag.DadosSessao?.PerfilAcesso == PerfisAcesso.ADMIN) 
-                            {
+                        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                            <ul class="navbar-nav flex-grow-1">
+                                @if (ViewBag.DadosSessao?.PerfilAcesso == PerfisAcesso.ADMIN)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuários</a>
+                                    </li>
+                                }
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuários</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Medidores" asp-action="Index">Medidores</a>
                                 </li>
-                            }
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Medidores" asp-action="Index">Medidores</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Estufas" asp-action="Index">Estufas</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Dashboards" asp-action="Index">Dashboards</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sobre" asp-action="Index">Sobre Nós</a>
-                            </li>
-                        </ul>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Estufas" asp-action="Index">Estufas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Dashboards" asp-action="Index">Dashboards</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sobre" asp-action="Index">Sobre Nós</a>
+                                </li>
+                            </ul>
                     </div>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Autenticacao" asp-action="Logoff">Sair</a>
                 </div>
             </nav>
         </header>
