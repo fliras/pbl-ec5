@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Weathuino.DAO;
+﻿using Weathuino.DAO;
 using Weathuino.Models;
 
 namespace Weathuino.Controllers
@@ -27,8 +25,8 @@ namespace Weathuino.Controllers
             if (string.IsNullOrEmpty(usuario.Senha))
                 ModelState.AddModelError("Senha", "Informe uma senha!");
 
-            if (usuario.PerfilAcesso.Id == 0)
-                ModelState.AddModelError("PerfilAcesso.Id", "Escolha um perfil de acesso!");
+            if (usuario.PerfilAcesso == 0)
+                ModelState.AddModelError("PerfilAcesso", "Escolha um perfil de acesso!");
 
             return ModelState.IsValid;
         }
@@ -36,23 +34,6 @@ namespace Weathuino.Controllers
         protected override void PreencheDadosParaView(string Operacao, UsuarioViewModel model)
         {
             base.PreencheDadosParaView(Operacao, model);
-            PreparaComboPerfisAcesso();
-        }
-
-        private void PreparaComboPerfisAcesso()
-        {
-            PerfilAcessoDAO dao = new PerfilAcessoDAO();
-            List<PerfilAcessoViewModel> perfis = dao.Listagem();
-            List<SelectListItem> listPerfis = new List<SelectListItem>();
-
-            listPerfis.Add(new SelectListItem("Selecione um perfil...", "0"));
-
-            foreach (PerfilAcessoViewModel perfil in perfis)
-            {
-                SelectListItem item = new SelectListItem(perfil.Nome, perfil.Id.ToString());
-                listPerfis.Add(item);
-            }
-            ViewBag.PerfisAcesso = listPerfis;
         }
     }
 }

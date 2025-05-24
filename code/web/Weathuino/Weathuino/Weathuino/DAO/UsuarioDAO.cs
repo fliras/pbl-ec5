@@ -2,6 +2,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Weathuino.Models;
+using Weathuino.Enums;
 
 namespace Weathuino.DAO
 {
@@ -15,7 +16,7 @@ namespace Weathuino.DAO
                 new SqlParameter("nome", usuario.Nome),
                 new SqlParameter("email", usuario.Email),
                 new SqlParameter("senha", CriaHashBcrypt(usuario.Senha)),
-                new SqlParameter("idPerfil", usuario.PerfilAcesso.Id)
+                new SqlParameter("idPerfil", usuario.PerfilAcesso)
             };
         }
 
@@ -32,11 +33,7 @@ namespace Weathuino.DAO
                 Nome = row["nomeUsuario"].ToString(),
                 Email = row["emailUsuario"].ToString(),
                 Senha = row["senhaUsuario"].ToString(),
-                PerfilAcesso = new PerfilAcessoViewModel()
-                {
-                    Id = Convert.ToInt32(row["idPerfilAcesso"]),
-                    Nome = row["nomePerfilAcesso"].ToString()
-                }
+                PerfilAcesso = (PerfisAcesso)Convert.ToInt32(row["idPerfilAcesso"]),
             };
         }
         protected override void SetTabela()

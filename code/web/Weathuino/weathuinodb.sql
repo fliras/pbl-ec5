@@ -130,7 +130,7 @@ CREATE PROCEDURE spConsulta_usuarios
 AS
 BEGIN
 	DECLARE @query VARCHAR(MAX) = 'SELECT u.id idUsuario, u.nome nomeUsuario, u.email emailUsuario, '
-	    + 'u.senha senhaUsuario, pa.id idPerfilAcesso, pa.nome nomePerfilAcesso FROM usuarios u '
+	    + 'u.senha senhaUsuario, pa.id idPerfilAcesso FROM usuarios u '
 		+ 'INNER JOIN perfisAcesso pa ON pa.id = u.id_perfil_acesso ';
 
 	IF ISNULL(@id, 0) <> 0
@@ -266,25 +266,6 @@ BEGIN
 		SET @estaEmUso = 0;
 
 	SELECT @estaEmUso estaEmUso;
-END
-GO
-
---
-
-DROP PROCEDURE IF EXISTS spConsulta_perfisAcesso
-GO
-CREATE PROCEDURE spConsulta_perfisAcesso
-(
-	@id INTEGER
-)
-AS
-BEGIN
-	DECLARE @query VARCHAR(MAX) = 'SELECT pa.id idPerfilAcesso, pa.nome nomePerfilAcesso FROM perfisAcesso pa ';
-
-	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + 'WHERE pa.id = ' + CAST(@id as VARCHAR(MAX));
-	
-	EXEC(@query);
 END
 GO
 

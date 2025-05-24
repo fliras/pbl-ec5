@@ -1,4 +1,5 @@
-﻿@model UsuarioViewModel
+﻿@using Weathuino.Enums
+@model UsuarioViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Usuários";
@@ -34,8 +35,10 @@
             <input type="password" asp-for="Senha" class="form-control" />
             <span asp-validation-for="Senha" class="text-danger mb-3 d-block"></span>
 
-            <select asp-for="PerfilAcesso.Id" asp-items="ViewBag.PerfisAcesso" class="form-control"></select>
-            <span asp-validation-for="PerfilAcesso.Id" class="text-danger d-block mb-3"></span>
+            <select asp-for="PerfilAcesso" asp-items="Html.GetEnumSelectList<PerfisAcesso>()" class="form-control">
+                <option value="0" selected>Selecione...</option>
+            </select>
+            <span asp-validation-for="PerfilAcesso" class="text-danger d-block mb-3"></span>
 
             <input class="btn btn-success" type="submit" value="Salvar" />
             &nbsp;
