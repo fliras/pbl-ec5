@@ -1,6 +1,9 @@
 ﻿using Weathuino.DAO;
 using Weathuino.Models;
 using Weathuino.Enums;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 
 namespace Weathuino.Controllers
 {
@@ -35,6 +38,19 @@ namespace Weathuino.Controllers
         protected override void PreencheDadosParaView(string Operacao, UsuarioViewModel model)
         {
             base.PreencheDadosParaView(Operacao, model);
+        }
+
+        public IActionResult ConsultaComFiltros(FiltrosUsuarioViewModel filtros)
+        {
+            try
+            {
+                List<UsuarioViewModel> usuariosFiltrados = DAO.ConsultaComFiltros(filtros);
+                return PartialView("pvGridUsuarios", usuariosFiltrados);
+            }
+            catch (Exception error)
+            {
+                return Json(new { erro = true, msg = error.Message });
+            }
         }
     }
 }

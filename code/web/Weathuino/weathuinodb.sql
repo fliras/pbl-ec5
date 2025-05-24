@@ -90,12 +90,12 @@ CREATE PROCEDURE spInsere_usuarios
 	@nome VARCHAR(100),
 	@email VARCHAR(100),
 	@senha CHAR(60),
-	@idPerfil INTEGER
+	@perfilUsuario INTEGER
 )
 AS
 BEGIN
 	INSERT INTO usuarios (id, nome, email, senha, id_perfil_acesso)
-		VALUES (@id, @nome, @email, @senha, @idPerfil);
+		VALUES (@id, @nome, @email, @senha, @perfilUsuario);
 END
 GO
 
@@ -107,7 +107,7 @@ CREATE PROCEDURE spAltera_usuarios
 	@nome VARCHAR(100),
 	@email VARCHAR(100),
 	@senha CHAR(60),
-	@idPerfil INTEGER
+	@perfilUsuario INTEGER
 )
 AS
 BEGIN
@@ -115,7 +115,7 @@ BEGIN
 		nome = @nome,
 		email = @email,
 		senha = @senha,
-		id_perfil_acesso = @idPerfil
+		id_perfil_acesso = @perfilUsuario
 	WHERE id = @id
 END
 GO
@@ -127,27 +127,19 @@ CREATE PROCEDURE spConsulta_usuarios
 	@id INTEGER = null,
 	@email VARCHAR(MAX) = null,
 	@nome VARCHAR(MAX) = null,
-	@idPerfil INTEGER = null
+	@perfilUsuario INTEGER = null
 )
 AS
 BEGIN
-	DECLARE @query VARCHAR(MAX) = 'SELECT u.id idUsuario, u.nome nomeUsuario, u.email emailUsuario, '
-	    + 'u.senha senhaUsuario, pa.id idPerfilAcesso FROM usuarios u '
-		+ 'INNER JOIN perfisAcesso pa ON pa.id = u.id_perfil_acesso WHERE 1=1';
-
-	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + ' AND u.id = ' + CAST(@id as VARCHAR(MAX));
-
-	IF @nome IS NOT NULL
-		SET @query = @query + ' AND u.nome = ''' + @nome + '''';
-
-	IF @email IS NOT NULL
-		SET @query = @query + ' AND u.email = ''' + @email + '''';
-
-	IF ISNULL(@idPerfil, 0) <> 0
-		SET @query = @query + ' AND pa.id = ' + CAST(@idPerfil as VARCHAR(MAX));
-	
-	EXEC(@query);
+	SELECT u.id idUsuario, u.nome nomeUsuario, u.email emailUsuario,
+		   u.senha senhaUsuario, pa.id idPerfilAcesso
+	FROM usuarios u
+	INNER JOIN perfisAcesso pa ON pa.id = u.id_perfil_acesso
+	WHERE
+		(@id IS NULL OR u.id = @id) AND
+		(@nome IS NULL OR u.nome like '%' + @nome + '%') AND
+		(@email IS NULL OR u.email like '%' + @email + '%') AND
+		(@perfilUsuario IS NULL OR pa.id = @perfilUsuario);
 END
 GO
 
@@ -204,20 +196,15 @@ CREATE PROCEDURE spConsulta_estufas
 )
 AS
 BEGIN
-	DECLARE @query VARCHAR(MAX) = 'SELECT e.id idEstufa, e.nome nomeEstufa, e.descricao descricaoEstufa, '
-	    + 'e.temperatura_min tempMinEstufa, e.temperatura_max tempMaxEstufa, m.id idMedidor, m.nome nomeMedidor FROM estufas e '
-		+ 'INNER JOIN medidores m ON m.id = e.id_medidor WHERE 1=1 ';
-
-	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + ' AND e.id = ' + CAST(@id as VARCHAR(MAX));
-
-	IF @nome IS NOT NULL
-		SET @query = @query + ' AND e.nome = ''' + @nome + '''';
-
-	IF @descricao IS NOT NULL
-		SET @query = @query + ' AND e.descricao = ''' + @descricao + '''';
-	
-	EXEC(@query);
+	SELECT e.id idEstufa, e.nome nomeEstufa, e.descricao descricaoEstufa,
+	       e.temperatura_min tempMinEstufa, e.temperatura_max tempMaxEstufa,
+		   m.id idMedidor, m.nome nomeMedidor
+	FROM estufas e 
+	INNER JOIN medidores m ON m.id = e.id_medidor
+	WHERE
+		(@id IS NULL OR e.id = @id) AND
+		(@nome IS NULL OR e.nome like '%' + @nome + '%') AND
+		(@descricao IS NULL OR e.descricao like '%' + @descricao + '%');
 END
 GO
 
@@ -260,15 +247,11 @@ CREATE PROCEDURE spConsulta_medidores
 )
 AS
 BEGIN
-	DECLARE @query VARCHAR(MAX) = 'SELECT m.id idMedidor, m.nome nomeMedidor, m.data_ultimo_registro ultimoRegistroMedidor FROM medidores m WHERE 1=1';
-
-	IF ISNULL(@id, 0) <> 0
-		SET @query = @query + ' AND m.id = ' + CAST(@id as VARCHAR(MAX));
-
-	IF @nome IS NOT NULL
-		SET @query = @query + ' AND m.nome = ''' + @nome + '''';
-	
-	EXEC(@query);
+	SELECT m.id idMedidor, m.nome nomeMedidor, m.data_ultimo_registro ultimoRegistroMedidor
+		FROM medidores m
+		WHERE
+			(@id IS NULL OR m.id = @id) AND
+			(@nome IS NULL OR m.nome like '%' + @nome + '%');
 END
 GO
 
