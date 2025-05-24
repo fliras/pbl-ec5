@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Weathuino.DAO;
 using Weathuino.Models;
+using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
@@ -10,6 +11,7 @@ namespace Weathuino.Controllers
         public EstufasController()
         {
             DAO = new EstufaDAO();
+            AcessoExigido = PerfisAcesso.COMUM;
         }
 
         protected override bool ValidaDados(EstufaViewModel estufa, string operacao)

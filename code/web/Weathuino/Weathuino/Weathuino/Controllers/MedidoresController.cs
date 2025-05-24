@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Weathuino.DAO;
 using Weathuino.Models;
+using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
@@ -10,6 +11,7 @@ namespace Weathuino.Controllers
         public MedidoresController()
         {
             DAO = new MedidorDAO();
+            AcessoExigido = PerfisAcesso.COMUM;
         }
 
         public override IActionResult Delete(int id)
