@@ -35,7 +35,7 @@ namespace Weathuino.Controllers
             }
         }
 
-        protected override bool ValidaDados(MedidorViewModel medidor, string operacao)
+        protected override bool ValidaDados(MedidorViewModel medidor, ModosOperacao operacao)
         {
             bool validacaoBaseOK = base.ValidaDados(medidor, operacao);
             if (!validacaoBaseOK) return false;

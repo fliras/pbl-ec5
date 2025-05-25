@@ -16,7 +16,7 @@ namespace Weathuino.Controllers
             AcessoExigido = PerfisAcesso.COMUM;
         }
 
-        protected override bool ValidaDados(EstufaViewModel estufa, string operacao)
+        protected override bool ValidaDados(EstufaViewModel estufa, ModosOperacao operacao)
         {
             bool validacaoBaseOK = base.ValidaDados(estufa, operacao);
             if (!validacaoBaseOK) return false;
@@ -30,7 +30,7 @@ namespace Weathuino.Controllers
             if (estufa.Medidor.Id == 0)
                 ModelState.AddModelError("Medidor.Id", "Escolha um medidor!");
 
-            if (estufa.Imagem == null && operacao == "I")
+            if (estufa.Imagem == null && operacao == ModosOperacao.INCLUSAO)
                 ModelState.AddModelError("Imagem", "Escolha uma imagem.");
 
             bool imagemDeTamanhoExcessivo = estufa.Imagem != null && estufa.Imagem.Length / 1024 / 1024 >= 2;
@@ -39,7 +39,7 @@ namespace Weathuino.Controllers
 
             if (ModelState.IsValid)
             {
-                bool imagemNaoMudouNaAlteracao = operacao == "A" && estufa.Imagem == null;
+                bool imagemNaoMudouNaAlteracao = operacao == ModosOperacao.ALTERACAO && estufa.Imagem == null;
                 if (imagemNaoMudouNaAlteracao)
                 {
                     estufa.ImagemEmByte = DAO.ObtemPorID(estufa.Id).ImagemEmByte;
@@ -53,7 +53,7 @@ namespace Weathuino.Controllers
             return ModelState.IsValid;
         }
 
-        protected override void PreencheDadosParaView(string Operacao, EstufaViewModel model)
+        protected override void PreencheDadosParaView(ModosOperacao Operacao, EstufaViewModel model)
         {
             base.PreencheDadosParaView(Operacao, model);
             PreparaComboMedidores();

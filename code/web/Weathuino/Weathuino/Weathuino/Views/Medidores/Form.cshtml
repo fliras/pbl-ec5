@@ -1,4 +1,5 @@
-﻿@model MedidorViewModel
+﻿@using Weathuino.Enums
+@model MedidorViewModel
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Medidores";
@@ -11,7 +12,7 @@
         <form action="Save" method="POST">
             <input type="hidden" name="Operacao" value="@ViewBag.Operacao" />
 
-            @if (ViewBag.Operacao == "I")
+            @if (ViewBag.Operacao == ModosOperacao.INCLUSAO)
             {
                 <input asp-for="Id" type="hidden" class="form-control" />
             }

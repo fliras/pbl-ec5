@@ -15,7 +15,7 @@ namespace Weathuino.Controllers
             AcessoExigido = PerfisAcesso.ADMIN;
         }
 
-        protected override bool ValidaDados(UsuarioViewModel usuario, string operacao)
+        protected override bool ValidaDados(UsuarioViewModel usuario, ModosOperacao operacao)
         {
             bool validacaoBaseOK = base.ValidaDados(usuario, operacao);
             if (!validacaoBaseOK) return false;
@@ -35,7 +35,7 @@ namespace Weathuino.Controllers
             return ModelState.IsValid;
         }
 
-        protected override void PreencheDadosParaView(string Operacao, UsuarioViewModel model)
+        protected override void PreencheDadosParaView(ModosOperacao Operacao, UsuarioViewModel model)
         {
             base.PreencheDadosParaView(Operacao, model);
         }

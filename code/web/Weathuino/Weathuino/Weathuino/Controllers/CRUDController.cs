@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Weathuino.DAO;
+using Weathuino.Enums;
 using Weathuino.Models;
 
 namespace Weathuino.Controllers
@@ -32,9 +33,9 @@ namespace Weathuino.Controllers
         {
             try
             {
-                ViewBag.Operacao = "I";
+                ViewBag.Operacao = ModosOperacao.INCLUSAO;
                 T model = Activator.CreateInstance<T>();
-                PreencheDadosParaView("I", model);
+                PreencheDadosParaView(ModosOperacao.INCLUSAO, model);
                 return View(NomeViewForm, model);
             }
             catch (Exception erro)
@@ -43,13 +44,13 @@ namespace Weathuino.Controllers
             }
         }
 
-        protected virtual void PreencheDadosParaView(string Operacao, T model)
+        protected virtual void PreencheDadosParaView(ModosOperacao Operacao, T model)
         {
-            if (GeraProximoId && Operacao == "I")
+            if (GeraProximoId && Operacao == ModosOperacao.INCLUSAO)
                 model.Id = DAO.GeraProximoID();
         }
 
-        public virtual IActionResult Save(T model, string Operacao)
+        public virtual IActionResult Save(T model, ModosOperacao Operacao)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace Weathuino.Controllers
                     return View(NomeViewForm, model);
                 }
 
-                if (Operacao == "I")
+                if (Operacao == ModosOperacao.INCLUSAO)
                     DAO.Insert(model);
                 else
                     DAO.Update(model);
@@ -74,7 +75,7 @@ namespace Weathuino.Controllers
         }
 
         // Atualmente não há validações comuns para todas as controllers, apenas a rotina de limpar o ModelState.
-        protected virtual bool ValidaDados(T model, string operacao)
+        protected virtual bool ValidaDados(T model, ModosOperacao operacao)
         {
             ModelState.Clear();
             return true;
@@ -84,13 +85,13 @@ namespace Weathuino.Controllers
         {
             try
             {
-                ViewBag.Operacao = "A";
+                ViewBag.Operacao = ModosOperacao.ALTERACAO;
                 var model = DAO.ObtemPorID(id);
                 if (model == null)
                     return RedirectToAction(NomeViewIndex);
                 else
                 {
-                    PreencheDadosParaView("A", model);
+                    PreencheDadosParaView(ModosOperacao.ALTERACAO, model);
                     return View(NomeViewForm, model);
                 }
             }
