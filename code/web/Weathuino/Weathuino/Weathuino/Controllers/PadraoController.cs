@@ -54,7 +54,7 @@ namespace Weathuino.Controllers
             string dadosEmJSON = session.GetString("DadosSessao");
             if (dadosEmJSON.IsNullOrEmpty())
                 return null;
-            return JSONUtils.ConverteSringJSONParaObjeto<SessaoViewModel>(dadosEmJSON);
+            return JSONUtils.ConverteStringJSONParaObjeto<SessaoViewModel>(dadosEmJSON);
         }
     }
 }

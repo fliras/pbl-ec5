@@ -10,12 +10,12 @@ namespace Weathuino.Utils
             return JsonConvert.SerializeObject(obj);
         }
 
-        public static JObject ConverteObjetoParaJSON(object obj)
+        public static JObject ConverteObjetoParaJObject(object obj)
         {
             return JObject.FromObject(obj);
         }
 
-        public static T ConverteSringJSONParaObjeto<T>(string json)
+        public static T ConverteStringJSONParaObjeto<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json);
         }
