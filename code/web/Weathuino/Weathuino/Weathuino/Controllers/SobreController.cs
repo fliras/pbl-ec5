@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Weathuino.Models;
+using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
     public class SobreController : PadraoController
     {
+        public SobreController()
+        {
+            AcessoExigido = PerfisAcesso.COMUM;
+        }
+
         private List<IntegranteViewModel> _integrantes = new List<IntegranteViewModel>()
         {
             new IntegranteViewModel { Nome = "Felipe Lira", RM = "081230006" },
