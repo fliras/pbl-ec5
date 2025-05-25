@@ -18,6 +18,9 @@ namespace Weathuino.DAO
                 new SqlParameter("idMedidor", estufa.Medidor.Id)
             };
 
+            if (estufa.ImagemEmByte != null)
+                parametros.Add(new SqlParameter("imagem", estufa.ImagemEmByte));
+
             if (estufa.TemperaturaMinima != null)
                 parametros.Add(new SqlParameter("temperaturaMin", estufa.TemperaturaMinima));
 
@@ -41,6 +44,8 @@ namespace Weathuino.DAO
                 }
             };
 
+            if (row["imagemEstufa"] != DBNull.Value)
+                estufa.ImagemEmByte = row["imagemEstufa"] as byte[];
             if (row["tempMinEstufa"] != DBNull.Value)
                 estufa.TemperaturaMinima = Convert.ToSingle(row["tempMinEstufa"]);
             if (row["tempMaxEstufa"] != DBNull.Value)

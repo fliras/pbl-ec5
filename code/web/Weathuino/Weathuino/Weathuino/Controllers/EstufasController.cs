@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Weathuino.DAO;
 using Weathuino.Models;
 using Weathuino.Enums;
+using System.Reflection;
+using Weathuino.Utils;
 
 namespace Weathuino.Controllers
 {
@@ -27,6 +29,26 @@ namespace Weathuino.Controllers
 
             if (estufa.Medidor.Id == 0)
                 ModelState.AddModelError("Medidor.Id", "Escolha um medidor!");
+
+            if (estufa.Imagem == null && operacao == "I")
+                ModelState.AddModelError("Imagem", "Escolha uma imagem.");
+
+            bool imagemDeTamanhoExcessivo = estufa.Imagem != null && estufa.Imagem.Length / 1024 / 1024 >= 2;
+            if (imagemDeTamanhoExcessivo)
+                ModelState.AddModelError("Imagem", "Imagem limitada a 2 mb.");
+
+            if (ModelState.IsValid)
+            {
+                bool imagemNaoMudouNaAlteracao = operacao == "A" && estufa.Imagem == null;
+                if (imagemNaoMudouNaAlteracao)
+                {
+                    estufa.ImagemEmByte = DAO.ObtemPorID(estufa.Id).ImagemEmByte;
+                }
+                else
+                {
+                    estufa.ImagemEmByte = FileUtils.ConverteArquivoEmArrayDeBytes(estufa.Imagem);
+                }
+            }
 
             return ModelState.IsValid;
         }

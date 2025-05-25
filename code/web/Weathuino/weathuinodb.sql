@@ -49,6 +49,7 @@ CREATE TABLE estufas (
     descricao VARCHAR(200),
     temperatura_min DECIMAL(5, 2),
     temperatura_max DECIMAL(5, 2),
+	imagem VARBINARY(MAX),
     id_medidor INT NOT NULL,
     FOREIGN KEY (id_medidor) REFERENCES medidores(id)
 );
@@ -71,10 +72,10 @@ INSERT INTO medidores (id, nome, data_ultimo_registro) VALUES
 (2, 'Medidor Beta', NULL),
 (3, 'Medidor Gama', '2025-04-06 08:45:19');
 
-INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, id_medidor) VALUES
-(1, 'Estufa Norte', 'Estufa principal da unidade norte', 18.00, 30.00, 1),
-(2, 'Estufa Sul', 'Controle de temperatura média', 20.00, 28.00, 2),
-(3, 'Estufa Experimental', 'Ambiente para testes e simulações', 15.50, 32.00, 3);
+INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, imagem, id_medidor) VALUES
+(1, 'Estufa Norte', 'Estufa principal da unidade norte', 18.00, 30.00, NULL, 1),
+(2, 'Estufa Sul', 'Controle de temperatura média', 20.00, 28.00, NULL, 2),
+(3, 'Estufa Experimental', 'Ambiente para testes e simulações', 15.50, 32.00, NULL, 3);
 
 
 
@@ -82,7 +83,7 @@ INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, id_m
 -- PROCEDURES
 -------------------------------------------------
 
-DROP PROCEDURE IF EXISTS spInsereUsuario
+DROP PROCEDURE IF EXISTS spInsere_usuarios
 GO
 CREATE PROCEDURE spInsere_usuarios
 (
@@ -154,12 +155,13 @@ CREATE PROCEDURE spInsere_estufas
 	@descricao VARCHAR(200),
 	@temperaturaMin DECIMAL(5,2) = NULL,
 	@temperaturaMax DECIMAL(5,2) = NULL,
+	@imagem VARBINARY(MAX) = NULL,
 	@idMedidor INTEGER
 )
 AS
 BEGIN
-	INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, id_medidor)
-		VALUES (@id, @nome, @descricao, @temperaturaMin, @temperaturaMax, @idMedidor);
+	INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, imagem, id_medidor)
+		VALUES (@id, @nome, @descricao, @temperaturaMin, @temperaturaMax, @imagem, @idMedidor);
 END
 GO
 
@@ -172,6 +174,7 @@ CREATE PROCEDURE spAltera_estufas
 	@descricao VARCHAR(200),
 	@temperaturaMin DECIMAL(5,2) = NULL,
 	@temperaturaMax DECIMAL(5,2) = NULL,
+	@imagem VARBINARY(MAX) = NULL,
 	@idMedidor INTEGER
 )
 AS
@@ -181,6 +184,7 @@ BEGIN
 		descricao = @descricao,
 		temperatura_min = @temperaturaMin,
 		temperatura_max = @temperaturaMax,
+		imagem = @imagem,
 		id_medidor = @idMedidor
 	WHERE id = @id
 END
@@ -198,7 +202,7 @@ AS
 BEGIN
 	SELECT e.id idEstufa, e.nome nomeEstufa, e.descricao descricaoEstufa,
 	       e.temperatura_min tempMinEstufa, e.temperatura_max tempMaxEstufa,
-		   m.id idMedidor, m.nome nomeMedidor
+		   e.imagem imagemEstufa, m.id idMedidor, m.nome nomeMedidor
 	FROM estufas e 
 	INNER JOIN medidores m ON m.id = e.id_medidor
 	WHERE
