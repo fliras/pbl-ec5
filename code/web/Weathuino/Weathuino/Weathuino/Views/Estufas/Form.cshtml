@@ -23,41 +23,49 @@
 				<br />
 			}
 
-			<label for="Nome" class="control-label">Nome</label>
-			<input asp-for="Nome" class="form-control" />
-			<span asp-validation-for="Nome" class="text-danger mb-3 d-block"></span>
+			<fieldset disabled="@(ViewBag.Operacao == ModosOperacao.VISUALIZACAO)">
+				<label for="Nome" class="control-label">Nome</label>
+				<input asp-for="Nome" class="form-control" />
+				<span asp-validation-for="Nome" class="text-danger mb-3 d-block"></span>
 
-			<label for="Descricao" class="control-label">Descrição</label>
-			<input asp-for="Descricao" class="form-control" />
-			<span asp-validation-for="Descricao" class="text-danger mb-3 d-block"></span>
+				<label for="Descricao" class="control-label">Descrição</label>
+				<input asp-for="Descricao" class="form-control" />
+				<span asp-validation-for="Descricao" class="text-danger mb-3 d-block"></span>
 
-			<div class="d-flex justify-content-between gap-2">
-				<div>
-					<label for="TemperaturaMinima" class="control-label">Temperatura Mínima (°C)</label>
-					<input asp-for="TemperaturaMinima" class="form-control" />
+				<div class="d-flex justify-content-between gap-2">
+					<div>
+						<label for="TemperaturaMinima" class="control-label">Temperatura Mínima (°C)</label>
+						<input asp-for="TemperaturaMinima" class="form-control" />
+					</div>
+					<div>
+						<label for="TemperaturaMaxima" class="control-label">Temperatura Máxima (°C)</label>
+						<input type="number" asp-for="TemperaturaMaxima" class="form-control" />
+					</div>
 				</div>
-				<div>
-					<label for="TemperaturaMaxima" class="control-label">Temperatura Máxima (°C)</label>
-					<input type="number" asp-for="TemperaturaMaxima" class="form-control" />
-				</div>
-			</div>
-			<span asp-validation-for="TemperaturaMinima" class="text-danger d-block"></span>
-			<span asp-validation-for="TemperaturaMaxima" class="text-danger mb-3 d-block"></span>
-			<br />
-
-			<select asp-for="Medidor.Id" asp-items="ViewBag.Medidores" class="form-control"></select>
-			<span asp-validation-for="Medidor.Id" class="text-danger d-block mb-3"></span>
-			<br />
-
-			<div>
-				<input type="file" name="Imagem" id="Imagem" onchange="exibeImagem()" class="btn" />
-				<img id="imgPreview" src="data:image/jpeg;base64,@Model.ImagemEmBase64" class="img-responsive" width="100">
+				<span asp-validation-for="TemperaturaMinima" class="text-danger d-block"></span>
+				<span asp-validation-for="TemperaturaMaxima" class="text-danger mb-3 d-block"></span>
 				<br />
-				<span asp-validation-for="Imagem" class="text-danger"></span>
-			</div>
-			<br />
 
-			<input class="btn btn-success" type="submit" value="Salvar" />
+				<select asp-for="Medidor.Id" asp-items="ViewBag.Medidores" class="form-control"></select>
+				<span asp-validation-for="Medidor.Id" class="text-danger d-block mb-3"></span>
+				<br />
+
+				<div>
+					@if (ViewBag.Operacao != ModosOperacao.VISUALIZACAO)
+					{
+						<input type="file" name="Imagem" id="Imagem" onchange="exibeImagem()" class="btn mb-3" />
+					}
+					<img id="imgPreview" src="data:image/jpeg;base64,@Model.ImagemEmBase64" class="img-responsive" width="300">
+					<br />
+					<span asp-validation-for="Imagem" class="text-danger"></span>
+				</div>
+				<br />
+			</fieldset>
+			
+			@if (ViewBag.Operacao != ModosOperacao.VISUALIZACAO)
+			{
+				<input class="btn btn-success" type="submit" value="Salvar" />
+			}
 			&nbsp;
 			<a href="/estufas/index" class="btn btn-light btn-outline-dark">Voltar</a>
 			<br />

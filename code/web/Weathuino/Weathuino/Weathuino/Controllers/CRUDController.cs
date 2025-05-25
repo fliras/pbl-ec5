@@ -101,6 +101,26 @@ namespace Weathuino.Controllers
             }
         }
 
+        public IActionResult View(int id)
+        {
+            try
+            {
+                ViewBag.Operacao = ModosOperacao.VISUALIZACAO;
+                var model = DAO.ObtemPorID(id);
+                if (model == null)
+                    return RedirectToAction(NomeViewIndex);
+                else
+                {
+                    PreencheDadosParaView(ModosOperacao.VISUALIZACAO, model);
+                    return View(NomeViewForm, model);
+                }
+            }
+            catch (Exception erro)
+            {
+                return View("Error", new ErrorViewModel(erro.ToString()));
+            }
+        }
+
         public virtual IActionResult Delete(int id)
         {
             try

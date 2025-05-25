@@ -13,8 +13,11 @@
     {
         <tr>
             <td>
-                <a href="/Estufas/Edit?id=@estufa.Id"><img class="icone-crud mr-1" src="~/imgs/icone_lapis.png" /></a>
-                <a href="javascript:deletaRegistro(@estufa.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
+                <div class="d-flex justify-content-around">
+                    <a href="/Estufas/Edit?id=@estufa.Id"><img class="icone-crud" src="~/imgs/icone_lapis.png" /></a>
+                    <a href="javascript:deletaRegistro(@estufa.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
+                    <a href="/Estufas/View?id=@estufa.Id"><img class="icone-crud" src="~/imgs/icone_olho.png" /></a>
+                </div>
             </td>
             <td>@estufa.Id</td>
             <td>@estufa.Nome</td>
