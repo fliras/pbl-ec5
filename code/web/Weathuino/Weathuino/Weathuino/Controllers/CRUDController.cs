@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Weathuino.APIs.Fiware;
+using Weathuino.APIs.Fiware.Models;
 using Weathuino.DAO;
 using Weathuino.Enums;
 using Weathuino.Models;
