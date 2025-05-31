@@ -37,6 +37,7 @@ GO
 -- Create table: medidores
 CREATE TABLE medidores (
     id INT PRIMARY KEY,
+	device_id_fiware VARCHAR(45) NOT NULL,
     nome VARCHAR(45) NOT NULL,
     data_ultimo_registro DATETIME
 );
@@ -67,10 +68,10 @@ INSERT INTO usuarios (id, nome, email, senha, id_perfil_acesso) VALUES
 (2, 'Bob', 'bob@user.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2),  -- senha: user123
 (3, 'Carol', 'carol@guest.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2); -- senha: visit123
 
-INSERT INTO medidores (id, nome, data_ultimo_registro) VALUES
-(1, 'Medidor Alpha', CURRENT_TIMESTAMP),
-(2, 'Medidor Beta', NULL),
-(3, 'Medidor Gama', '2025-04-06 08:45:19');
+INSERT INTO medidores (id, device_id_fiware, nome, data_ultimo_registro) VALUES
+(1, 'senshtl1', 'Medidor Alpha', CURRENT_TIMESTAMP),
+(2, 'senshtl2', 'Medidor Beta', NULL),
+(3, 'senshtl3', 'Medidor Gama', '2025-04-06 08:45:19');
 
 INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, imagem, id_medidor) VALUES
 (1, 'Estufa Norte', 'Estufa principal da unidade norte', 18.00, 30.00, NULL, 1),
@@ -219,12 +220,13 @@ GO
 CREATE PROCEDURE spInsere_medidores
 (
 	@id INTEGER,
-	@nome VARCHAR(45)
+	@nome VARCHAR(45),
+	@deviceIdFiware VARCHAR(45)
 )
 AS
 BEGIN
-	INSERT INTO medidores (id, nome)
-		VALUES (@id, @nome);
+	INSERT INTO medidores (id, device_id_fiware, nome)
+		VALUES (@id, @deviceIdFiware, @nome);
 END
 GO
 
@@ -233,11 +235,14 @@ GO
 CREATE PROCEDURE spAltera_medidores
 (
 	@id INTEGER,
-	@nome VARCHAR(45)
+	@nome VARCHAR(45),
+	@deviceIdFiware VARCHAR(45)
 )
 AS
 BEGIN
-	UPDATE medidores SET nome = @nome
+	UPDATE medidores SET
+		nome = @nome,
+		device_id_fiware = @deviceIdFiware
 		WHERE id = @id;
 END
 GO
@@ -251,7 +256,7 @@ CREATE PROCEDURE spConsulta_medidores
 )
 AS
 BEGIN
-	SELECT m.id idMedidor, m.nome nomeMedidor, m.data_ultimo_registro ultimoRegistroMedidor
+	SELECT m.id idMedidor, m.device_id_fiware deviceIdFiware,  m.nome nomeMedidor, m.data_ultimo_registro ultimoRegistroMedidor
 		FROM medidores m
 		WHERE
 			(@id IS NULL OR m.id = @id) AND

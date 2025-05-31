@@ -12,18 +12,23 @@
         <form action="Save" method="POST">
             <input type="hidden" name="Operacao" value="@ViewBag.Operacao" />
 
-            @if (ViewBag.Operacao == ModosOperacao.INCLUSAO)
-            {
-                <input asp-for="Id" type="hidden" class="form-control" />
-            }
-            else
+            @if (ViewBag.Operacao != ModosOperacao.INCLUSAO)
             {
                 <label for="Id" class="control-label">ID</label>
                 <input asp-for="Id" class="form-control" readonly />
                 <br />
             }
+            else
+            {
+                <input asp-for="Id" type="hidden" class="form-control" />
+            }
 
             <fieldset disabled="@(ViewBag.Operacao == ModosOperacao.VISUALIZACAO)">
+                <label for="DeviceIdFiware" class="control-label">Device ID (Fiware)</label>
+                <input asp-for="DeviceIdFiware" class="form-control" readonly="@(ViewBag.Operacao != ModosOperacao.INCLUSAO)" />
+                <span asp-validation-for="DeviceIdFiware" class="text-danger"></span>
+                <br />
+                
                 <label for="Nome" class="control-label">Nome</label>
                 <input asp-for="Nome" class="form-control" />
                 <span asp-validation-for="Nome" class="text-danger"></span>
@@ -37,5 +42,6 @@
             <a href="/medidores/index" class="btn btn-light btn-outline-dark">Voltar</a>
             <br />
         </form>
+        <span class="text-danger">@ViewBag.ErrorAfterSave</span>
     </div>
 </div> 

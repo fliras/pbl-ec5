@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using Weathuino.APIs.Fiware.Models;
@@ -8,6 +9,11 @@ namespace Weathuino.APIs.Fiware
 {
     public class FiwareClient
     {
+        private Dictionary<string, string> _mensagensDeErroDasURLs = new Dictionary<string, string>()
+        {
+            {Constantes.URL_NOVO_IOT, "Não foi possível registrar o dispositivo"},
+        };
+
         public FiwareOutput CriaDispositivo(string deviceID, int entityNameID)
         {
             var payloadNovoIoT = new PayloadNovoIoT
@@ -101,7 +107,7 @@ namespace Weathuino.APIs.Fiware
             return new FiwareOutput
             {
                 Sucesso = false,
-                MensagemDeErro = $"Erro ao enviar dados. Code: {response.StatusCode}"
+                MensagemDeErro = $"Erro na comunicação com o Fiware ao acessar: {response.RequestMessage.RequestUri}"
             };
         }
     }

@@ -21,7 +21,8 @@ namespace Weathuino.DAO
             return new SqlParameter[]
             {
                 new SqlParameter("id", medidor.Id),
-                new SqlParameter("nome", medidor.Nome)
+                new SqlParameter("nome", medidor.Nome),
+                new SqlParameter("deviceIdFiware", medidor.DeviceIdFiware)
             };
         }
 
@@ -31,6 +32,7 @@ namespace Weathuino.DAO
             {
                 Id = Convert.ToInt32(row["idMedidor"]),
                 Nome = row["nomeMedidor"].ToString(),
+                DeviceIdFiware = row["deviceIdFiware"].ToString()
             };
             
             if (row["ultimoRegistroMedidor"] != DBNull.Value)

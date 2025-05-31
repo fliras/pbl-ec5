@@ -63,6 +63,14 @@ namespace Weathuino.Controllers
                     return View(NomeViewForm, model);
                 }
 
+                bool beforeSaveComSucesso = ExecuteBeforeSave(model, Operacao);
+                if (!beforeSaveComSucesso)
+                {
+                    ViewBag.Operacao = Operacao;
+                    PreencheDadosParaView(Operacao, model);
+                    return View(NomeViewForm, model);
+                }
+
                 if (Operacao == ModosOperacao.INCLUSAO)
                     DAO.Insert(model);
                 else
@@ -74,6 +82,12 @@ namespace Weathuino.Controllers
             {
                 return View("Error", new ErrorViewModel(erro.ToString()));
             }
+        }
+
+        // As classes filhas implementam ações antes do Save caso aplicável.
+        protected virtual bool ExecuteBeforeSave(T model, ModosOperacao operacao)
+        {
+            return true;
         }
 
         // Atualmente não há validações comuns para todas as controllers, apenas a rotina de limpar o ModelState.
