@@ -71,8 +71,9 @@ namespace Weathuino.APIs.Fiware
             return MontaOutput(response);
         }
 
-        public FiwareOutput DeletaDispositivoNoOrion(string entityName)
+        public FiwareOutput DeletaDispositivoNoOrion(int entityNameID)
         {
+            string entityName = $"{Constantes.BASE_ENTITY_NAME}{entityNameID}";
             string url = $"{Constantes.URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT}/{entityName}";
             var request = MontaDeleteRequest(url);
             using var httpClient = new HttpClient(new HttpClientHandler());

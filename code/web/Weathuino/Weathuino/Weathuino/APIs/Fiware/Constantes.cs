@@ -17,5 +17,7 @@
 
         //public static readonly string URL_EXCLUSAO_DISPOSITIVO_ORION = $"http://{IP_SERVIDOR}:1026/v2/entities";
         public static readonly string URL_EXCLUSAO_DISPOSITIVO_ORION = $"https://testefiware.free.beeceptor.com";
+
+        public static readonly string BASE_ENTITY_NAME = "urn:ngsi-ld:Sensor:";
     }
 }

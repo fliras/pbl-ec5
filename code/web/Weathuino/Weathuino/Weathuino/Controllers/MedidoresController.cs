@@ -56,7 +56,14 @@ namespace Weathuino.Controllers
                 bool medidorEmUso = dao.VerificaSeMedidorEstaEmUso(id);
                 if (medidorEmUso)
                 {
-                    ViewBag.AlertaErro = "Este medidor não pode ser excluído pois já está em uso!";
+                    ViewBag.AlertaErro = "Este medidor não pode ser excluido pois está sendo utilizado por uma estufa";
+                    return View("Index", dao.ObtemTodos());
+                }
+
+                MedidorViewModel medidor = dao.ObtemPorID(id);
+                bool sucessoNaExclusaoDoFiware = DeletaMedidorNoFiware(medidor);
+                if (!sucessoNaExclusaoDoFiware)
+                {
                     return View("Index", dao.ObtemTodos());
                 }
 
@@ -67,6 +74,28 @@ namespace Weathuino.Controllers
             {
                 return View("Error", new ErrorViewModel(ex.ToString()));
             }
+        }
+
+        private bool DeletaMedidorNoFiware(MedidorViewModel medidor)
+        {
+            FiwareClient fClient = new FiwareClient();
+            FiwareOutput fOutput;
+
+            fOutput = fClient.DeletaDispositivoNoAgentMQTT(medidor.DeviceIdFiware);
+            if (!fOutput.Sucesso)
+            {
+                ViewBag.AlertaErro = fOutput.MensagemDeErro;
+                return false;
+            }
+
+            fOutput = fClient.DeletaDispositivoNoOrion(medidor.Id);
+            if (!fOutput.Sucesso)
+            {
+                ViewBag.AlertaErro = fOutput.MensagemDeErro;
+                return false;
+            }
+
+            return true;
         }
 
         protected override bool ValidaDados(MedidorViewModel medidor, ModosOperacao operacao)
