@@ -98,7 +98,7 @@ body::before {
     position: absolute;
     top: 10px;
     left: 12px;
-    background-image: url('/images/icon_menu.png');
+    background-image: url('/imgs/icon_menu.png');
     background-size: contain;
     background-repeat: no-repeat;
     width: 36px;
@@ -151,43 +151,43 @@ body::before {
 
 /* ícones */
 .menu-item.heat::before {
-    background-image: url('/images/icon_heat.png');
+    background-image: url('/imgs/icon_heat.png');
 }
 
 .menu-item.heat:hover::before {
-    background-image: url('/images/icon_heat-hover.png');
+    background-image: url('/imgs/icon_heat-hover.png');
 }
 
 .menu-item.sensor::before {
-    background-image: url('/images/icon_sensor.png');
+    background-image: url('/imgs/icon_sensor.png');
 }
 
 .menu-item.sensor:hover::before {
-    background-image: url('/images/icon_sensor-hover.png');
+    background-image: url('/imgs/icon_sensor-hover.png');
 }
 
 .menu-item.graph::before {
-    background-image: url('/images/icon_graph.png');
+    background-image: url('/imgs/icon_graph.png');
 }
 
 .menu-item.graph:hover::before {
-    background-image: url('/images/icon_graph-hover.png');
+    background-image: url('/imgs/icon_graph-hover.png');
 }
 
 .menu-item.user::before {
-    background-image: url('/images/icon_user.png');
+    background-image: url('/imgs/icon_user.png');
 }
 
 .menu-item.user:hover::before {
-    background-image: url('/images/icon_user-hover.png');
+    background-image: url('/imgs/icon_user-hover.png');
 }
 
 .menu-item.about::before {
-    background-image: url('/images/icon_about.png');
+    background-image: url('/imgs/icon_about.png');
 }
 
 .menu-item.about:hover::before {
-    background-image: url('/images/icon_about-hover.png');
+    background-image: url('/imgs/icon_about-hover.png');
 }
 
 .menu-item span {
@@ -257,7 +257,7 @@ body::before {
     width: 36px;
     height: 36px;
     transition: 0.2s;
-    background-image: url('/images/icon_darkmode.png');
+    background-image: url('/imgs/icon_darkmode.png');
     background-size: contain;
     background-repeat: no-repeat;
     z-index: 2;
@@ -277,7 +277,7 @@ body.dark-mode {
 
 body.dark-mode .menu-item.dark-mode-toggle::before {
     transition: 0.2s;
-    background-image: url('/images/icon_lightmode.png'); 
+    background-image: url('/imgs/icon_lightmode.png'); 
 }
 
 body.dark-mode .sidebar {

@@ -96,19 +96,19 @@ tr {
 }
 
 .filter-btn.filter {
-    background-image: url('/images/icon_filter.png');
+    background-image: url('/imgs/icon_filter.png');
 }
 
 .filter-btn.filter:hover {
-    background-image: url('/images/icon_filter-hover.png');
+    background-image: url('/imgs/icon_filter-hover.png');
 }
 
 .filter-btn.create {
-    background-image: url('/images/icon_create.png');
+    background-image: url('/imgs/icon_create.png');
 }
 
 .filter-btn.create:hover {
-    background-image: url('/images/icon_create-hover.png');
+    background-image: url('/imgs/icon_create-hover.png');
 }
 
 .action-menu {
@@ -129,19 +129,19 @@ tr {
 }
 
 .action-btn.edit {
-    background-image: url('/images/icon_edit.png');
+    background-image: url('/imgs/icon_edit.png');
 }
 
 .action-btn.edit:hover {
-    background-image: url('/images/icon_edit-hover.png');
+    background-image: url('/imgs/icon_edit-hover.png');
 }
 
 .action-btn.delete {
-    background-image: url('/images/icon_delete.png');
+    background-image: url('/imgs/icon_delete.png');
 }
 
 .action-btn.delete:hover {
-    background-image: url('/images/icon_delete-hover.png');
+    background-image: url('/imgs/icon_delete-hover.png');
 }
 
 /* cores modo claro */
