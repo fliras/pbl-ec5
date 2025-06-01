@@ -1,52 +1,33 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Medidores";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Medidores";
+}
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/sensor.css" asp-append-version="true" />
 }
 
 <h2>Medidores</h2>
 @if (ViewBag.AlertaErro != null)
 {
-    <span class="text-danger">@ViewBag.AlertaErro</span>
+	<span class="text-danger">@ViewBag.AlertaErro</span>
 }
 
-<div class="d-flex justify-content-center align-items-center mb-4 mt-4">
-    <label class="font-weight-bold">Filtrar por:</label>
-    <div class="d-flex gap-3 mr-2 ml-3">
-        <input id="id" type="number" placeholder="Id" class="form-control w-auto mr-2"/>
-        <input id="nome" type="text" placeholder="Nome" class="form-control w-auto mr-2"/>
-    </div>
-    <div>
-        <input type="button" onclick="filtraMedidores()" class="btn btn-info" value="Filtrar" />
-        <a class="btn btn-dark" href="/Medidores/Create">Novo</a>
-    </div>
+
+<!-- Filtro e Novo -->
+
+<div class="filter-container">
+	<div class="filter-inputs">
+		<input id="id" type="number" placeholder="Id" class="filter-input id-input" />
+		<input id="nome" type="text" placeholder="Nome" class="filter-input name-input" />
+	</div>
+	<ul class="filter-menu">
+		<li class="filter-btn filter" onclick="filtraMedidores()"></li>
+		<li class="filter-btn create" onclick="window.location.href='/Medidores/Create'"></li>
+	</ul>
 </div>
 
 <div id="dadosMedidores"></div>
-
-<script>
-    function deletaMedidor(id) {
-        const deveDeletar = confirm('Tem certeza que deseja excluir este medidor?');
-        if (deveDeletar)
-            document.location.href = `/Medidores/Delete?id=${id}`;
-    }
-    
-    function filtraMedidores() {
-        const id = document.getElementById('id').value;
-        const nome = document.getElementById('nome').value;
-
-        $.ajax({
-            url: "/medidores/ConsultaComFiltros",
-            data: { id, nome },
-            success: function (dados) {
-                if (dados.erro) {
-                    alert(dados.msg);
-                }
-                else {
-                    document.getElementById('dadosMedidores').innerHTML = dados;
-                }
-            },
-        });
-    }
-
-    window.onload = filtraMedidores;
-</script>
+@section Scripts {
+	<script src="~/js/medidores.js"></script>
+}

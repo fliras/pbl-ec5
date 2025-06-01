@@ -144,6 +144,14 @@ tr {
     background-image: url('/imgs/icon_delete-hover.png');
 }
 
+.action-btn.view {
+    background-image: url('/imgs/icon_view.png');
+}
+
+.action-btn.view:hover {
+    background-image: url('/imgs/icon_view-hover.png');
+}
+
 /* cores modo claro */
 :root {
     --background-color: #e3d5d4;
