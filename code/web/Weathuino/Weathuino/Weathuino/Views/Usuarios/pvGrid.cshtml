@@ -1,23 +1,23 @@
 ﻿@model List<UsuarioViewModel>
 
-<table class="table table-bordered">
+<table>
     <tr>
-        <th class="col-1">Ações</th>
-        <th class="col-1">ID</th>
-        <th class="col-4">Nome</th>
-        <th class="col-2">E-mail</th>
-        <th class="col-2">Perfil Acesso</th>
+        <th>Ações</th>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Perfil Acesso</th>
     </tr>
 
     @foreach (UsuarioViewModel usuario in Model)
     {
         <tr>
             <td>
-                <div class="d-flex justify-content-around">
-                    <a href="/Usuarios/Edit?id=@usuario.Id"><img class="icone-crud" src="~/imgs/icone_lapis.png" /></a>
-                    <a href="javascript:deletaRegistro(@usuario.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
-                    <a href="/Usuarios/View?id=@usuario.Id"><img class="icone-crud" src="~/imgs/icone_olho.png" /></a>
-                </div>
+                <ul class="action-menu">
+                    <li class="action-btn edit" onclick="window.location.href='/Usuarios/Edit?id=@usuario.Id'"></li>
+                    <li class="action-btn delete" onclick="deletaRegistro(@usuario.Id)"></li>
+                    <li class="action-btn view" onclick="window.location.href='/Usuarios/View?id=@usuario.Id'"></li>
+                </ul>
             </td>
             <td>@usuario.Id</td>
             <td>@usuario.Nome</td>

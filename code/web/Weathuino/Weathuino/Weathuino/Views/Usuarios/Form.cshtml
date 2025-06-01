@@ -5,10 +5,14 @@
     ViewData["Title"] = "Usuários";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/sensor.css" asp-append-version="true" />
+}
+
 <h2 class="mb-4">Cadastro de Usuários</h2>
 
-<div class="row">
-    <div class="col-6">
+<div>
+    <div>
         <form action="Save" method="POST">
             <input type="hidden" name="Operacao" value="@ViewBag.Operacao" />
 
