@@ -1,49 +1,46 @@
 ﻿@model List<EstufaViewModel>
 
-<table class="table table-bordered">
+<table>
     <tr>
-        <th class="col-1">Ações</th>
-        <th class="col-1">ID</th>
-        <th class="col-4">Nome</th>
-        <th class="col-2">Faixa Temperatura (°C)</th>
-        <th class="col-2">Medidor</th>
+        <th>Ações</th>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Faixa Temperatura (°C)</th>
+        <th>Medidor</th>
     </tr>
 
     @foreach (EstufaViewModel estufa in Model)
     {
         <tr>
             <td>
-                <div class="d-flex justify-content-around">
-                    <a href="/Estufas/Edit?id=@estufa.Id"><img class="icone-crud" src="~/imgs/icone_lapis.png" /></a>
-                    <a href="javascript:deletaRegistro(@estufa.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
-                    <a href="/Estufas/View?id=@estufa.Id"><img class="icone-crud" src="~/imgs/icone_olho.png" /></a>
-                </div>
+                <ul class="action-menu">
+                    <li class="action-btn edit" onclick="window.location.href='/Estufas/Edit?id=@estufa.Id'"></li>
+                    <li class="action-btn delete" onclick="deletaRegistro(@estufa.Id)"></li>
+                    <li class="action-btn view" onclick="window.location.href='/Estufas/View?id=@estufa.Id'"></li>
+                </ul>
             </td>
             <td>@estufa.Id</td>
             <td>@estufa.Nome</td>
-            <td class="d-flex justify-content-between">
-                @if (estufa.TemperaturaMinima == null && estufa.TemperaturaMaxima == null)
-                {
-                    <span class="font-italic">Não especificado</span>
-                }
-                else
-                {
-                    if (@estufa.TemperaturaMinima != null)
+            <td >
+                <div class="d-flex justify-content-between">
+                    @if (estufa.TemperaturaMinima == null && estufa.TemperaturaMaxima == null)
                     {
-                        <span>Mín: @estufa.TemperaturaMinima?.ToString("F1")</span>
+                        <span class="font-italic">Não especificado</span>
                     }
-                    if (estufa.TemperaturaMaxima != null)
+                    else
                     {
-                        <span>Máx: @estufa.TemperaturaMaxima?.ToString("F1")</span>
+                        if (@estufa.TemperaturaMinima != null)
+                        {
+                            <span>Mín: @estufa.TemperaturaMinima?.ToString("F1")</span>
+                        }
+                        if (estufa.TemperaturaMaxima != null)
+                        {
+                            <span>Máx: @estufa.TemperaturaMaxima?.ToString("F1")</span>
+                        }
                     }
-                }
+                </div>
             </td>
             <td>@estufa.Medidor.Nome</td>
         </tr>
     }
 </table>
-<style>
-    .icone-crud {
-        width: 1.1em;
-    }
-</style>
