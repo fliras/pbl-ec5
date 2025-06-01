@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Weathuino.Enums
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -27,9 +29,12 @@
                 <li class="menu-item graph">
                     <a asp-controller="Dashboards" asp-action="Index"><span>Dashboards</span></a>
                 </li>
-                <li class="menu-item user">
-                    <a asp-controller="Usuarios" asp-action="Index"><span>Usuários</span></a>
-                </li>
+                @if (ViewBag.DadosSessao?.PerfilAcesso == PerfisAcesso.ADMIN)
+                {
+                    <li class="menu-item user">
+                        <a asp-controller="Usuarios" asp-action="Index"><span>Usuários</span></a>
+                    </li>
+                }
                 <li class="menu-item about">
                     <a asp-controller="Sobre" asp-action="Index"><span>Sobre Nós</span></a>
                 </li>
