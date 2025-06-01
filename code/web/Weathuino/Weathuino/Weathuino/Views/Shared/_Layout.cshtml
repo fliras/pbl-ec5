@@ -1,65 +1,59 @@
-﻿@using Weathuino.Enums
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Weathuino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
 </head>
 <body>
     @if (!@ViewData["Title"].Equals("Login"))
     {
-        <header>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-                <div class="container">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Weathuino</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                            <ul class="navbar-nav flex-grow-1">
-                                @if (ViewBag.DadosSessao?.PerfilAcesso == PerfisAcesso.ADMIN)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuários</a>
-                                    </li>
-                                }
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Medidores" asp-action="Index">Medidores</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Estufas" asp-action="Index">Estufas</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Dashboards" asp-action="Index">Dashboards</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sobre" asp-action="Index">Sobre Nós</a>
-                                </li>
-                            </ul>
-                    </div>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Autenticacao" asp-action="Logoff">Sair</a>
-                </div>
-            </nav>
-        </header>
+        <div class="sidebar" id="sidebar">
+            <button class="menu-btn" onclick="toggleSidebar()"></button>
+            <br />
+            <br />
+            <br />
+            <ul class="menu">
+                <li class="menu-item heat">
+                    <a asp-controller="Estufas" asp-action="Index">
+                        <span>Estufas</span>
+                    </a>
+                </li>
+                <li class="menu-item sensor">
+                    <a asp-controller="Medidores" asp-action="Index"><span>Sensores</span></a>
+                </li>
+                <li class="menu-item graph">
+                    <a asp-controller="Dashboards" asp-action="Index"><span>Dashboards</span></a>
+                </li>
+                <li class="menu-item user">
+                    <a asp-controller="Usuarios" asp-action="Index"><span>Usuários</span></a>
+                </li>
+                <li class="menu-item about">
+                    <a asp-controller="Sobre" asp-action="Index"><span>Sobre Nós</span></a>
+                </li>
+            </ul>
+            <div class="menu-item dark-mode-toggle">
+                <button onclick="toggleDarkMode()"><span>Modo Escuro</span></button>
+            </div>
+        </div>
+
+        <div class="logo">
+            <a asp-controller="Home" asp-action="Index">
+                <img src="~/imgs/logo.png" alt="Weathuino" />
+            </a>
+        </div>
     }
-    else
-    {
-        <div class="mb-5"></div>
-    }
-    
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="main-content" id="mainContent">
+        <main class="container pt-4">
             @RenderBody()
         </main>
     </div>
+
+    <script src="~/js/sidebar.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
