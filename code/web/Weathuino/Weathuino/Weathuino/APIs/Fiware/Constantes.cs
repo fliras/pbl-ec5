@@ -1,23 +1,38 @@
-﻿namespace Weathuino.APIs.Fiware
+﻿using System;
+
+namespace Weathuino.APIs.Fiware
 {
     public class Constantes
     {
-        public static readonly string IP_SERVIDOR = "";
-        //public static readonly string URL_NOVO_IOT = $"http://{IP_SERVIDOR}:4041/iot/devices";
-        public static readonly string URL_NOVO_IOT = $"https://testefiware.free.beeceptor.com";
+        public static readonly string IP_SERVIDOR = "52.1.120.205";
+        public static readonly string URL_NOVO_IOT = $"http://{IP_SERVIDOR}:4041/iot/devices";
+        //public static readonly string URL_NOVO_IOT = $"https://testefiware.free.beeceptor.com";
 
-        //public static readonly string URL_REGISTRO_COMANDOS = $"http://{IP_SERVIDOR}:1026/v2/registrations";
-        public static readonly string URL_REGISTRO_COMANDOS = $"https://testefiware.free.beeceptor.com";
+        public static readonly string URL_REGISTRO_ATRIBUTOS = $"http://{IP_SERVIDOR}:1026/v2/subscriptions";
+        //public static readonly string URL_REGISTRO_ATRIBUTOS = $"https://testefiware.free.beeceptor.com";
 
-        //public static readonly string URL_REGISTRO_ATRIBUTOS = $"http://{IP_SERVIDOR}:1026/v2/subscriptions";
-        public static readonly string URL_REGISTRO_ATRIBUTOS = $"https://testefiware.free.beeceptor.com";
+        public static readonly string URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT = $"http://{IP_SERVIDOR}:4041/iot/devices";
+        //public static readonly string URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT = $"https://testefiware.free.beeceptor.com";
 
-        //public static readonly string URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT = $"http://{IP_SERVIDOR}:4041/iot/devices";
-        public static readonly string URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT = $"https://testefiware.free.beeceptor.com";
+        public static readonly string URL_EXCLUSAO_DISPOSITIVO_ORION = $"http://{IP_SERVIDOR}:1026/v2/entities";
+        //public static readonly string URL_EXCLUSAO_DISPOSITIVO_ORION = $"https://testefiware.free.beeceptor.com";
 
-        //public static readonly string URL_EXCLUSAO_DISPOSITIVO_ORION = $"http://{IP_SERVIDOR}:1026/v2/entities";
-        public static readonly string URL_EXCLUSAO_DISPOSITIVO_ORION = $"https://testefiware.free.beeceptor.com";
+        public static string ENTITY_NAME(int entityNameID)
+        {
+            return $"urn:ngsi-ld:Sensor:{entityNameID}";
+        }
 
-        public static readonly string BASE_ENTITY_NAME = "urn:ngsi-ld:Sensor:";
+        public static string URL_DADOS_DISPOSITIVO_POR_PERIODO(int entityNameID, DateTime inicio, DateTime fim)
+        {
+            string dInicio = inicio.ToString("yyyy-MM-dd");
+            string dFim = fim.ToString("yyyy-MM-dd");
+            return $"{URL_DADOS_DISPOSITIVO(entityNameID)}&dateFrom={dInicio}&dateTo={dFim}";
+        }
+
+        public static string URL_DADOS_DISPOSITIVO(int entityNameID)
+        {
+            string entityName = ENTITY_NAME(entityNameID);
+            return $"http://{IP_SERVIDOR}:8666/STH/v1/contextEntities/type/Sensor/id/{entityName}/attributes/temperatura?lastN=100";
+        }
     }
 }

@@ -28,10 +28,7 @@ namespace Weathuino.APIs.Fiware.Payloads
                         },
                         ["attributes"] = new JArray
                         {
-                            new JObject { ["object_id"] = "s", ["name"] = "state", ["type"] = "Text" },
-                            new JObject { ["object_id"] = "l", ["name"] = "luminosidade", ["type"] = "Integer" },
                             new JObject { ["object_id"] = "t", ["name"] = "temperatura", ["type"] = "Float" },
-                            new JObject { ["object_id"] = "u", ["name"] = "umidade", ["type"] = "Float" }
                         }
                     }
                 }

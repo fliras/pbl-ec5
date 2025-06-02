@@ -31,13 +31,6 @@ namespace Weathuino.Controllers
                 return false;
             }
 
-            fOutput = fClient.RegistraComandosDeDispositivo(model.Id);
-            if (!fOutput.Sucesso)
-            {
-                ViewBag.ErrorAfterSave = fOutput.MensagemDeErro;
-                return false;
-            }
-
             fOutput = fClient.RegistraAtributosDeDispositivo(model.Id);
             if (!fOutput.Sucesso)
             {
@@ -82,13 +75,6 @@ namespace Weathuino.Controllers
             FiwareOutput fOutput;
 
             fOutput = fClient.DeletaDispositivoNoAgentMQTT(medidor.DeviceIdFiware);
-            if (!fOutput.Sucesso)
-            {
-                ViewBag.AlertaErro = fOutput.MensagemDeErro;
-                return false;
-            }
-
-            fOutput = fClient.DeletaDispositivoNoOrion(medidor.Id);
             if (!fOutput.Sucesso)
             {
                 ViewBag.AlertaErro = fOutput.MensagemDeErro;

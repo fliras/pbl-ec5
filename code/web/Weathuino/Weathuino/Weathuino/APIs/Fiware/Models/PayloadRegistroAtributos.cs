@@ -26,9 +26,7 @@ namespace Weathuino.APIs.Fiware.Payloads
                     {
                         ["attrs"] = new JArray
                         {
-                            "luminosidade",
-                            "temperatura",
-                            "umidade"
+                            "temperatura"
                         }
                     }
                 },
@@ -40,9 +38,7 @@ namespace Weathuino.APIs.Fiware.Payloads
                     },
                     ["attrs"] = new JArray
                     {
-                        "luminosidade",
-                        "temperatura",
-                        "umidade"
+                        "temperatura"
                     },
                     ["attrsFormat"] = "legacy"
                 }

@@ -1,7 +1,108 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard 1";
+	ViewData["Title"] = "Dashboard 1";
 }
 
-<div>
-    <img class="w-100" src="~/imgs/background_dashboard1.png" />
-</div>
+@section Scripts {
+	<!-- Chart.js -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+	<!-- jQuery para AJAX -->
+}
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/dashboard.css" />
+}
+
+<h2>Dashboard de Temperatura</h2>
+
+<canvas id="temperatureChart" width="800" height="400" style="background-color: white;"></canvas>
+
+<script>
+	let temperatureChart;
+	let maiorTimestamp;
+	const pontosAcumulados = [];
+	const qtdeMaximaDePontos = 100;
+
+	function iniciaChart() {
+		const ctx = document.getElementById('temperatureChart').getContext('2d');
+
+		temperatureChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				datasets: [{
+					label: 'Temperatura (°C)',
+					data: pontosAcumulados,
+					borderColor: 'rgba(75, 192, 192, 1)',
+					backgroundColor: 'rgba(75, 192, 192, 0.2)',
+					tension: 0.1
+				}]
+			},
+			options: {
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							tooltipFormat: 'dd/MM/yyyy HH:mm:ss',
+							displayFormats: {
+								second: 'dd/MM/yyyy HH:mm:ss',
+								minute: 'dd/MM/yyyy HH:mm:ss',
+								hour: 'dd/MM/yyyy HH:mm:ss'
+							}
+						},
+						title: {
+							display: true,
+							text: 'Horário'
+						}
+					},
+					y: {
+						title: {
+							display: true,
+							text: 'Temperatura (°C)'
+						}
+					}
+				}
+			}
+		});
+	}
+
+	function updateChart() {
+		$.ajax({
+			// url: '@Url.Action("GetTemperatureData", "Dashboards")',
+			url: '@Url.Action("ProxyToExternal", "Dashboards")',
+			method: 'GET',
+			success: function (data) {
+				const dadosNaRequisicao = JSON.parse(data).contextResponses[0].contextElement.attributes[0].values
+				let dadosParaInserir = dadosNaRequisicao;
+				if (maiorTimestamp)
+					dadosParaInserir = dadosParaInserir.filter(d => new Date(d.recvTime) > maiorTimestamp);
+
+				if (dadosParaInserir.length > 0) {
+					maiorTimestamp = new Date(dadosParaInserir[dadosParaInserir.length - 1].recvTime);
+					insereDadosNoGrafico(dadosParaInserir);
+				}
+			}
+		});
+	}
+
+	function insereDadosNoGrafico(dados) {
+		console.log('DEU QUANTO: ', dados.length);
+		dados.forEach(d => {
+			pontosAcumulados.push({
+				x: new Date(d.recvTime),
+				y: d.attrValue
+			});
+		});
+		if (pontosAcumulados.length > qtdeMaximaDePontos) {
+			const qtdeParaLimpar = pontosAcumulados.length - qtdeMaximaDePontos;
+			pontosAcumulados.splice(0, qtdeParaLimpar);
+		}
+		console.log(pontosAcumulados);
+		temperatureChart.update();
+	}
+
+	window.onload = () => {
+		iniciaChart();
+		updateChart();
+		setInterval(updateChart, 5000);
+	}
+</script>

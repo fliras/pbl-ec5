@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -9,11 +10,6 @@ namespace Weathuino.APIs.Fiware
 {
     public class FiwareClient
     {
-        private Dictionary<string, string> _mensagensDeErroDasURLs = new Dictionary<string, string>()
-        {
-            {Constantes.URL_NOVO_IOT, "Não foi possível registrar o dispositivo"},
-        };
-
         public FiwareOutput CriaDispositivo(string deviceID, int entityNameID)
         {
             var payloadNovoIoT = new PayloadNovoIoT
@@ -21,23 +17,10 @@ namespace Weathuino.APIs.Fiware
                 DeviceID = deviceID,
                 EntityNameID = entityNameID
             };
+            
             string payload = payloadNovoIoT.Monta();
             var request = MontaPostRequest(Constantes.URL_NOVO_IOT, payload);
-
-            using var httpClient = new HttpClient(new HttpClientHandler());
-            using var response = httpClient.SendAsync(request).Result;
-
-            return MontaOutput(response);
-        }
-
-        public FiwareOutput RegistraComandosDeDispositivo(int entityNameID)
-        {
-            var registroComandos = new PayloadRegistroComandos { EntityNameID = entityNameID };
-            string payload = registroComandos.Monta();
-            var request = MontaPostRequest(Constantes.URL_REGISTRO_COMANDOS, payload);
-
-            using var httpClient = new HttpClient(new HttpClientHandler());
-            using var response = httpClient.SendAsync(request).Result;
+            var response = ExecutaRequisicao(request);
 
             return MontaOutput(response);
         }
@@ -47,17 +30,14 @@ namespace Weathuino.APIs.Fiware
             var registroAtributos = new PayloadRegistroAtributos { EntityNameID = entityNameID };
             string payload = registroAtributos.Monta();
             var request = MontaPostRequest(Constantes.URL_REGISTRO_ATRIBUTOS, payload);
-
-            using var httpClient = new HttpClient(new HttpClientHandler());
-            using var response = httpClient.SendAsync(request).Result;
-
+            var response = ExecutaRequisicao(request);
             return MontaOutput(response);
         }
 
         private HttpRequestMessage MontaPostRequest(string url, string payload)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Content = new StringContent(payload, Encoding.UTF8, "appplication/json");
+            request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
             ConfiguraHeaders(request);
             return request;
         }
@@ -66,18 +46,7 @@ namespace Weathuino.APIs.Fiware
         {
             string url = $"{Constantes.URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT}/{deviceID}";
             var request = MontaDeleteRequest(url);
-            using var httpClient = new HttpClient(new HttpClientHandler());
-            using var response = httpClient.SendAsync(request).Result;
-            return MontaOutput(response);
-        }
-
-        public FiwareOutput DeletaDispositivoNoOrion(int entityNameID)
-        {
-            string entityName = $"{Constantes.BASE_ENTITY_NAME}{entityNameID}";
-            string url = $"{Constantes.URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT}/{entityName}";
-            var request = MontaDeleteRequest(url);
-            using var httpClient = new HttpClient(new HttpClientHandler());
-            using var response = httpClient.SendAsync(request).Result;
+            var response = ExecutaRequisicao(request);
             return MontaOutput(response);
         }
 
@@ -88,15 +57,51 @@ namespace Weathuino.APIs.Fiware
             return request;
         }
 
+        public FiwareOutput ObtemUltimosDadosDeDispositivo(int entityNameID)
+        {
+            string url = Constantes.URL_DADOS_DISPOSITIVO(entityNameID);
+            var request = MontaGetRequest(url);
+            var response = ExecutaRequisicao(request);
+            return MontaOutput(response);
+        }
+
+        public FiwareOutput ObtemDadosDeDispositivoEmUmPeriodo(int entityNameID, DateTime dataInicio, DateTime dataFim)
+        {
+            string url = Constantes.URL_DADOS_DISPOSITIVO_POR_PERIODO(entityNameID, dataInicio, dataFim);
+            var request = MontaGetRequest(url);
+            var response = ExecutaRequisicao(request);
+            return MontaOutput(response);
+        }
+
+        private HttpRequestMessage MontaGetRequest(string url)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            ConfiguraHeaders(request);
+            return request;
+        }
+
         private static void ConfiguraHeaders(HttpRequestMessage request)
         {
             request.Headers.Add("fiware-service", "smart");
             request.Headers.Add("fiware-servicepath", "/");
         }
 
+        private static HttpResponseMessage ExecutaRequisicao(HttpRequestMessage request)
+        {
+            using var httpClient = new HttpClient(new HttpClientHandler());
+            using var response = httpClient.SendAsync(request).Result;
+            return response;
+        }
+
         private FiwareOutput MontaOutput(HttpResponseMessage response)
         {
-            if (response.StatusCode == HttpStatusCode.OK)
+            List<HttpStatusCode> statusAceitos = new List<HttpStatusCode> {
+                HttpStatusCode.OK,
+                HttpStatusCode.NoContent,
+                HttpStatusCode.Created
+            };
+
+            if (statusAceitos.Contains(response.StatusCode))
             {
                 return new FiwareOutput
                 {
