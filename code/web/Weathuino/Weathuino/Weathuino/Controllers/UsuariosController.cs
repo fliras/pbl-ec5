@@ -25,6 +25,13 @@ namespace Weathuino.Controllers
 
             if (string.IsNullOrEmpty(usuario.Email))
                 ModelState.AddModelError("Email", "Informe um E-mail!");
+            else
+            {
+                UsuarioViewModel usuarioDoEmail = ((UsuarioDAO)DAO).ObtemPorEmail(usuario.Email);
+                bool emailEmUsoPorOutroUsuario = usuarioDoEmail != null && usuarioDoEmail.Id != usuario.Id;
+                if (emailEmUsoPorOutroUsuario)
+                    ModelState.AddModelError("Email", "Este E-mail já está em uso!");
+            }
 
             if (string.IsNullOrEmpty(usuario.Senha))
                 ModelState.AddModelError("Senha", "Informe uma senha!");

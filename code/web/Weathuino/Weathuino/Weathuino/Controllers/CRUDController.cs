@@ -90,6 +90,14 @@ namespace Weathuino.Controllers
         protected virtual bool ValidaDados(T model, ModosOperacao operacao)
         {
             ModelState.Clear();
+
+            if (operacao == ModosOperacao.INCLUSAO && DAO.ObtemPorID(model.Id) != null)
+                ModelState.AddModelError("Id", "Código já está em uso!");
+            if (operacao == ModosOperacao.ALTERACAO && DAO.ObtemPorID(model.Id) == null)
+                ModelState.AddModelError("Id", "Este registro não existe!");
+            if (model.Id <= 0)
+                ModelState.AddModelError("Id", "Id inválido!");
+
             return true;
         }
 

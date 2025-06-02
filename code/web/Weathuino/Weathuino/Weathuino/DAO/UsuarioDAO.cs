@@ -29,7 +29,10 @@ namespace Weathuino.DAO
             if (usuariosFiltrados.Count == 0)
                 return null;
 
-            UsuarioViewModel usuarioDoEmail = usuariosFiltrados[0];
+            UsuarioViewModel usuarioDoEmail = ObtemPorEmail(email);
+            if (usuarioDoEmail == null)
+                return null;
+
             bool senhaValida = BCryptUtils.ValidaHashBcrypt(senha, usuarioDoEmail.Senha);
             if (!senhaValida)
                 return null;
@@ -39,6 +42,15 @@ namespace Weathuino.DAO
                 IdUsuario = usuarioDoEmail.Id,
                 PerfilAcesso = usuarioDoEmail.PerfilAcesso
             };
+        }
+
+        public UsuarioViewModel ObtemPorEmail(string email)
+        {
+            FiltrosViewModel filtroEmail = new FiltrosViewModel { Email = email };
+            List<UsuarioViewModel> usuariosFiltrados = ConsultaComFiltros(filtroEmail);
+            if (usuariosFiltrados.Count == 0)
+                return null;
+            return usuariosFiltrados[0];
         }
 
         protected override UsuarioViewModel MontaModel(DataRow row)
