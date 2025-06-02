@@ -21,16 +21,30 @@ namespace Weathuino.Controllers
             AcessoExigido = PerfisAcesso.COMUM;
         }
 
-        public IActionResult Dashboard1()
+        public IActionResult DashboardTempoReal()
         {
-            PreparaComboEstufas();
-            return View();
+            try
+            {
+                PreparaComboEstufas();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
-        public IActionResult Dashboard2()
+        public IActionResult DashboardHistorico()
         {
-            PreparaComboEstufas();
-            return View();
+            try
+            {
+                PreparaComboEstufas();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.ToString()));
+            }
         }
 
         private void PreparaComboEstufas()
