@@ -90,6 +90,13 @@ namespace Weathuino.Controllers
 
             if (string.IsNullOrEmpty(medidor.DeviceIdFiware))
                 ModelState.AddModelError("DeviceIdFiware", "Informe o DeviceID do dispositivo no Fiware");
+            else
+            {
+                MedidorViewModel medidorDoDeviceID = ((MedidorDAO)DAO).ObtemPorDeviceID(medidor.DeviceIdFiware);
+                bool deviceIdEmUso = medidorDoDeviceID != null && medidorDoDeviceID.Id != medidor.Id;
+                if (deviceIdEmUso)
+                    ModelState.AddModelError("DeviceIdFiware", "Este DeviceID já está em uso!");
+            }
 
             if (string.IsNullOrEmpty(medidor.Nome))
                 ModelState.AddModelError("Nome", "Informe um nome!");

@@ -252,7 +252,8 @@ GO
 CREATE PROCEDURE spConsulta_medidores
 (
 	@id INTEGER = null,
-	@nome VARCHAR(MAX) = null
+	@nome VARCHAR(MAX) = null,
+	@deviceID VARCHAR(MAX) = null
 )
 AS
 BEGIN
@@ -260,7 +261,8 @@ BEGIN
 		FROM medidores m
 		WHERE
 			(@id IS NULL OR m.id = @id) AND
-			(@nome IS NULL OR m.nome like '%' + @nome + '%');
+			(@nome IS NULL OR m.nome like '%' + @nome + '%') AND
+			(@deviceID IS NULL OR m.device_id_fiware = @deviceID);
 END
 GO
 

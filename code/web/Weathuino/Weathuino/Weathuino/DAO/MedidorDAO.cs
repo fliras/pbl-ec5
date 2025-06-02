@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Weathuino.Models;
@@ -39,6 +40,16 @@ namespace Weathuino.DAO
                 medidor.DataUltimoRegistro = Convert.ToDateTime(row["ultimoRegistroMedidor"]);
             return medidor;
         }
+
+        public MedidorViewModel ObtemPorDeviceID(string deviceID)
+        {
+            FiltrosViewModel filtroDeviceID = new FiltrosViewModel { DeviceID = deviceID };
+            List<MedidorViewModel> medidoresFiltrados = ConsultaComFiltros(filtroDeviceID);
+            if (medidoresFiltrados.Count == 0)
+                return null;
+            return medidoresFiltrados[0];
+        }
+
         protected override void SetTabela()
         {
             Tabela = "medidores";
