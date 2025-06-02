@@ -6,7 +6,7 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     margin: 0;
-    padding: 160px 20px 20px;
+    padding: 0px 20px 20px;
     transition: background-color 0.3s, color 0.3s;
     overflow-y: auto;
 }
@@ -17,17 +17,17 @@ h1 {
 }
 
 .dashboard-container {
-    position: relative; 
+    position: relative;
+    margin-top: 40%;
     z-index: 30; 
-    width: 100%;
+    width: 110%;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    gap: 2em;
 }
 
 .dashboard-card {
     width: 100%;
-    max-width: 800px;
     margin-bottom: 30px;
     border: 2px solid var(--border-color);
     border-radius: 8px;
@@ -35,8 +35,6 @@ h1 {
     overflow: hidden;
     background-color: var(--cell-bg-color);
     transition: background-color 0.3s, border-color 0.3s;
-    position: relative;
-    z-index: 30;
 }
 
 .dashboard-card h5 {
@@ -46,11 +44,18 @@ h1 {
     padding: 14px 20px;
     font-size: 1.2rem;
     font-weight: bold;
+    width: 100%;
+    text-align: center;
+}
+
+.dashboard-card a {
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .dashboard-content {
     padding: 30px;
-    width: 50vw;
+    width: 55vw;
     height: 50vh;
     display: flex;
     align-items: center;
@@ -82,4 +87,22 @@ body.dark-mode {
     --header-bg-color: #e3d5d4;
     --header-text-color: #190a0b;
     --cell-bg-color: #2d1f1f;
+}
+
+.filter-btn {
+    width: 36px;
+    height: 36px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    border: none;
+}
+
+.filter-btn.start {
+    background-image: url('/imgs/icon_start.png');
+}
+
+.filter-btn.start:hover {
+    background-image: url('/imgs/icon_start-hover.png');
 }

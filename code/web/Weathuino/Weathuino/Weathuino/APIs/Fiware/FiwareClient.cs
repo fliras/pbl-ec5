@@ -20,7 +20,7 @@ namespace Weathuino.APIs.Fiware
             
             string payload = payloadNovoIoT.Monta();
             var request = MontaPostRequest(Constantes.URL_NOVO_IOT, payload);
-            var response = ExecutaRequisicao(request);
+            using var response = ExecutaRequisicao(request);
 
             return MontaOutput(response);
         }
@@ -30,7 +30,7 @@ namespace Weathuino.APIs.Fiware
             var registroAtributos = new PayloadRegistroAtributos { EntityNameID = entityNameID };
             string payload = registroAtributos.Monta();
             var request = MontaPostRequest(Constantes.URL_REGISTRO_ATRIBUTOS, payload);
-            var response = ExecutaRequisicao(request);
+            using var response = ExecutaRequisicao(request);
             return MontaOutput(response);
         }
 
@@ -46,7 +46,7 @@ namespace Weathuino.APIs.Fiware
         {
             string url = $"{Constantes.URL_EXCLUSAO_DISPOSITIVO_AGENT_MQTT}/{deviceID}";
             var request = MontaDeleteRequest(url);
-            var response = ExecutaRequisicao(request);
+            using var response = ExecutaRequisicao(request);
             return MontaOutput(response);
         }
 
@@ -61,7 +61,7 @@ namespace Weathuino.APIs.Fiware
         {
             string url = Constantes.URL_DADOS_DISPOSITIVO(entityNameID);
             var request = MontaGetRequest(url);
-            var response = ExecutaRequisicao(request);
+            using var response = ExecutaRequisicao(request);
             return MontaOutput(response);
         }
 
@@ -69,7 +69,15 @@ namespace Weathuino.APIs.Fiware
         {
             string url = Constantes.URL_DADOS_DISPOSITIVO_POR_PERIODO(entityNameID, dataInicio, dataFim);
             var request = MontaGetRequest(url);
-            var response = ExecutaRequisicao(request);
+            using var response = ExecutaRequisicao(request);
+            return MontaOutput(response);
+        }
+
+        public FiwareOutput ObtemDadosAtuaisDeDispositivo(int entityNameID)
+        {
+            string url = Constantes.URL_DADOS_ATUAIS_DISPOSITIVO(entityNameID);
+            var request = MontaGetRequest(url);
+            using var response = ExecutaRequisicao(request);
             return MontaOutput(response);
         }
 
@@ -89,8 +97,7 @@ namespace Weathuino.APIs.Fiware
         private static HttpResponseMessage ExecutaRequisicao(HttpRequestMessage request)
         {
             using var httpClient = new HttpClient(new HttpClientHandler());
-            using var response = httpClient.SendAsync(request).Result;
-            return response;
+            return httpClient.SendAsync(request).Result;
         }
 
         private FiwareOutput MontaOutput(HttpResponseMessage response)

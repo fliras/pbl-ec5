@@ -25,7 +25,7 @@ namespace Weathuino.APIs.Fiware
         public static string URL_DADOS_DISPOSITIVO_POR_PERIODO(int entityNameID, DateTime inicio, DateTime fim)
         {
             string dInicio = inicio.ToString("yyyy-MM-dd");
-            string dFim = fim.ToString("yyyy-MM-dd");
+            string dFim = $"{fim.ToString("yyyy-MM-dd")}T23:59:59";
             return $"{URL_DADOS_DISPOSITIVO(entityNameID)}&dateFrom={dInicio}&dateTo={dFim}";
         }
 
@@ -33,6 +33,12 @@ namespace Weathuino.APIs.Fiware
         {
             string entityName = ENTITY_NAME(entityNameID);
             return $"http://{IP_SERVIDOR}:8666/STH/v1/contextEntities/type/Sensor/id/{entityName}/attributes/temperatura?lastN=100";
+        }
+
+        public static string URL_DADOS_ATUAIS_DISPOSITIVO(int entityNameID)
+        {
+            string entityName = ENTITY_NAME(entityNameID);
+            return $"http://{IP_SERVIDOR}:1026/v2/entities/{entityName}";
         }
     }
 }

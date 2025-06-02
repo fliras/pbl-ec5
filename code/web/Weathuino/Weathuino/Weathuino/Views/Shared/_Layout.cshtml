@@ -45,11 +45,13 @@
             </div>
         </div>
 
-        <div class="logo">
-            <a asp-controller="Home" asp-action="Index">
-                <img src="~/imgs/logo.png" alt="Weathuino" />
-            </a>
-        </div>
+        @if (ViewContext.RouteData.Values["action"].Equals("Index")) {
+            <div class="logo">
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="~/imgs/logo.png" alt="Weathuino" />
+                </a>
+            </div>
+        }
     }
     <div class="main-content" id="mainContent">
         <main class="container pt-4">
@@ -60,6 +62,11 @@
     <script src="~/js/sidebar.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -2,27 +2,21 @@
     ViewData["Title"] = "Dashboards";
 }
 
-<div class="container py-5">
-    <div class="d-flex justify-content-center">
+@section Styles {
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+}
 
-        <!-- Card 1 -->
-        <div class="col-3">
-            <div class="card text-center h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Dashboard 1</h5>
-                    <a href="/Dashboards/Dashboard1"><img src="~/imgs/icone_dashboard.png" /></a>
-                </div>
-            </div>
-        </div>
+<div class="dashboard-container">
 
-        <!-- Card 2 -->
-        <div class="col-3">
-            <div class="card text-center h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Dashboard 2</h5>
-                    <a href="/Dashboards/Dashboard2"><img src="~/imgs/icone_dashboard.png" /></a>
-                </div>
-            </div>
-        </div>
+    <!-- Card 1 -->
+    <div class="dashboard-card d-flex flex-column align-items-center">
+        <h5 class="card-title">Temperatura em Tempo Real</h5>
+        <a href="/Dashboards/Dashboard1"><img src="~/imgs/icone_dashboard.png" /></a>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="dashboard-card d-flex flex-column align-items-center">
+        <h5 class="card-title">Histórico de Temperatura</h5>
+        <a href="/Dashboards/Dashboard2"><img src="~/imgs/icone_dashboard.png" /></a>
     </div>
 </div>

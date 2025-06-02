@@ -1,7 +1,163 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard 2";
+	ViewData["Title"] = "Dashboard 1";
 }
 
+@section Styles {
+	<link rel="stylesheet" href="~/css/dashboard.css" />
+}
+
+<h2 class="text-center">Histórico de Temperatura de Estufa</h2>
+
 <div>
-    <img class="w-100" src="~/imgs/background_dashboard2.png" />
+	<div class="d-inline-flex w-100 justify-content-center align-items-center mb-3 mt-3">
+		<div class="d-flex align-items-center">
+			<label class="col-form-label mr-2">Data inicial</label>
+			<input class="form-control w-auto" type="date" id="dataInicio" />
+		</div>
+		<div class="d-flex align-items-center ml-4 mr-4">
+			<label class="col-form-label mr-2">Data final</label>
+			<input class="form-control w-auto" type="date" id="dataFim" />
+		</div>
+		<select id="Estufa" name="Estufa" asp-items="ViewBag.Estufas" class="form-control w-25 mr-1"></select>
+		<input type="button" class="filter-btn start ml-1" onclick="iniciaChart()" />
+	</div>
 </div>
+
+<canvas id="temperatureChart" width="1000" height="450" style="background-color: white;"></canvas>
+
+@section Scripts {
+	<script>
+		const estufas = @Html.Raw(ViewBag.JsonEstufas);
+		let estufaSelecionada;
+		let dataInicio;
+		let dataFim;
+
+		let temperatureChart;
+		let pontosAcumulados = [];
+		const annotations = {}
+
+		function montaChart() {
+			const ctx = document.getElementById('temperatureChart').getContext('2d');
+
+			temperatureChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					datasets: [
+						{
+							label: 'Temperatura (°C)',
+							data: pontosAcumulados,
+							borderColor: 'rgba(75, 192, 192, 1)',
+							backgroundColor: 'rgba(75, 192, 192, 0.2)',
+							tension: 0.1
+						},
+					]
+				},
+				options: {
+					scales: {
+						x: {
+							type: 'time',
+							time: {
+								tooltipFormat: 'dd/MM/yyyy HH:mm:ss',
+								displayFormats: {
+									second: 'dd/MM/yyyy HH:mm:ss',
+									minute: 'dd/MM/yyyy HH:mm:ss',
+									hour: 'dd/MM/yyyy HH:mm:ss'
+								}
+							},
+							title: {
+								display: true,
+								text: 'Data e Hora'
+							}
+						},
+						y: {
+							title: {
+								display: true,
+								text: 'Temperatura (°C)'
+							}
+						}
+					},
+					plugins: {
+						annotation: {
+							annotations
+						},
+						legend: {
+							display: true
+						}
+					},
+				}
+			});
+		}
+
+		function iniciaChart() {
+			// limpa todos os pontos
+			pontosAcumulados.splice(0, pontosAcumulados.length);
+
+			const idEstufaSelecionada = document.getElementById('Estufa').value;
+			estufaSelecionada = estufas.find(e => e.Id == idEstufaSelecionada);
+			
+			dataInicio = document.getElementById('dataInicio').value;
+			dataFim = document.getElementById('dataFim').value;
+
+			montaRangesTemperatura(estufaSelecionada.TemperaturaMinima, estufaSelecionada.TemperaturaMaxima);
+			updateChart();
+		}
+
+		function updateChart() {
+			$.ajax({
+				url: `@(Url.Action("ProxyToExternal", "Dashboards"))?entityNameID=${estufaSelecionada.Medidor.Id}&dataInicio=${dataInicio}&dataFim=${dataFim}`,
+				method: 'GET',
+				success: function (data) {
+					const dadosNaRequisicao = JSON.parse(data).contextResponses[0].contextElement.attributes[0].values
+					insereDadosNoGrafico(dadosNaRequisicao);
+					temperatureChart.update();
+				}
+			});
+		}
+
+		function montaRangesTemperatura(tempMinima, tempMaxima) {
+			annotations.tempMinima = {
+				type: 'line',
+				yMin: tempMinima,
+				yMax: tempMinima, // linha horizontal no Y = 30
+				borderColor: 'red',
+				borderWidth: 2,
+				label: {
+					display: true,
+					content: `Temperatura Mín.: ${tempMinima}°C`,
+					position: 'end',
+					backgroundColor: 'rgba(255,0,0,0.2)',
+					color: 'red',
+					yAdjust: -10
+				}
+			}
+			annotations.tempMaxima = {
+				type: 'line',
+				yMin: tempMaxima,
+				yMax: tempMaxima, // linha horizontal no Y = 30
+				borderColor: 'red',
+				borderWidth: 2,
+				label: {
+					display: true,
+					content: `Temperatura Máx.: ${tempMaxima}°C`,
+					position: 'end',
+					backgroundColor: 'rgba(255,0,0,0.2)',
+					color: 'red',
+				}
+			}
+		}
+
+		function insereDadosNoGrafico(dados) {
+			pontosAcumulados.splice(0, pontosAcumulados.length);
+			dados.forEach(d => {
+				pontosAcumulados.push({
+					x: new Date(d.recvTime),
+					y: d.attrValue
+				});
+			});
+		}
+
+		window.onload = () => {
+			montaChart();
+		}
+	</script>
+}

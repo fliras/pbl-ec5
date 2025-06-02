@@ -9,6 +9,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Weathuino.APIs.Fiware;
 using Weathuino.APIs.Fiware.Models;
+using Weathuino.DAO;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Weathuino.Controllers
 {
@@ -21,38 +23,75 @@ namespace Weathuino.Controllers
 
         public IActionResult Dashboard1()
         {
+            PreparaComboEstufas();
             return View();
         }
 
         public IActionResult Dashboard2()
         {
+            PreparaComboEstufas();
             return View();
         }
 
-        public JsonResult GetTemperatureData()
+        private void PreparaComboEstufas()
         {
-            var rng = new Random();
-            var now = DateTimeOffset.UtcNow;
+            EstufaDAO dao = new EstufaDAO();
+            List<EstufaViewModel> estufas = dao.ObtemTodos();
+            List<SelectListItem> listaEstufas = new List<SelectListItem>();
 
-            var data = new List<DadosTemperatura>();
-            for (float i = 10; i >= 0; i -= 0.1f)
-            { // −2x^2 + 4x + 1
-                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var temp = Math.Round(20 + rng.NextDouble() * 10, 2);
-                data.Add(new DadosTemperatura { Timestamp = timestamp, Temperature = temp });
-                Thread.Sleep(100);
+            listaEstufas.Add(new SelectListItem("Selecione uma estufa...", "0"));
+
+            foreach (EstufaViewModel estufa in estufas)
+            {
+                SelectListItem item = new SelectListItem(estufa.Nome, estufa.Id.ToString());
+                listaEstufas.Add(item);
             }
-
-            Console.WriteLine($"tamanho da bitola: {data.Count}");
-
-            return Json("{\"contextResponses\":[{\"contextElement\":{\"attributes\":[{\"name\":\"luminosidade\",\"values\":[{\"_id\":\"682fb32a141d41000788a1e5\",\"recvTime\":\"2025-05-22T23:28:42.747Z\",\"attrName\":\"luminosidade\",\"attrType\":\"Integer\",\"attrValue\":43},{\"_id\":\"682fb32b141d41000788a1e9\",\"recvTime\":\"2025-05-22T23:28:43.814Z\",\"attrName\":\"luminosidade\",\"attrType\":\"Integer\",\"attrValue\":43}]}],\"id\":\"urn:ngsi-ld:Sensor:1\",\"isPattern\":false,\"type\":\"Sensor\"},\"statusCode\":{\"code\":\"200\",\"reasonPhrase\":\"OK\"}}]}");
+            ViewBag.Estufas = listaEstufas;
+            ViewBag.JsonEstufas = JsonConvert.SerializeObject(estufas);
         }
 
         public JsonResult ProxyToExternal()
         {
-            FiwareClient fClient = new FiwareClient();
-            FiwareOutput dados = fClient.ObtemUltimosDadosDeDispositivo(5);
-            return Json(dados.Dados);
+            try
+            {
+                int entityNameID = int.Parse(Request.Query["entityNameID"]);
+                DateTime dataInicio = Convert.ToDateTime(Request.Query["dataInicio"]);
+                DateTime dataFim = Convert.ToDateTime(Request.Query["dataFim"]);
+                FiwareClient fClient = new FiwareClient();
+                FiwareOutput dados;
+
+                if (dataInicio != DateTime.MinValue && dataFim != DateTime.MinValue)
+                {
+                    dados = fClient.ObtemDadosDeDispositivoEmUmPeriodo(entityNameID, dataInicio, dataFim);
+                }
+                else
+                {
+                    dados = fClient.ObtemUltimosDadosDeDispositivo(entityNameID);
+                }
+
+                return Json(dados.Dados);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception ao consultar Fiware: {ex.StackTrace}");
+                return Json("[]");
+            }
+        }
+
+        public JsonResult DadosAtuaisDispositivo()
+        {
+            try
+            {
+                int entityNameID = int.Parse(Request.Query["entityNameID"]);
+                FiwareClient fClient = new FiwareClient();
+                FiwareOutput dados = fClient.ObtemDadosAtuaisDeDispositivo(entityNameID);
+                return Json(dados.Dados);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception ao consultar Fiware: {ex.StackTrace}");
+                return Json("[]");
+            }
         }
     }
 }
