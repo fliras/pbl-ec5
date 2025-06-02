@@ -31,7 +31,7 @@
 		let temperatureChart;
 		let maiorTimestamp;
 		let pontosAcumulados = [];
-		const qtdeMaximaDePontos = 50;
+		const qtdeMaximaDePontos = 1000;
 		const annotations = {}
 		let intervalGrafico;
 
@@ -95,7 +95,7 @@
 
 			// limpa todos os pontos
 			pontosAcumulados.splice(0, pontosAcumulados.length);
-			maiorTimestamp = null;
+			maiorTimestamp = new Date();
 			document.getElementById('temperaturaAtual').innerHTML = '';
 
 			const idEstufaSelecionada = document.getElementById('Estufa').value;
@@ -116,10 +116,7 @@
 				method: 'GET',
 				success: function (data) {
 					const dadosNaRequisicao = JSON.parse(data).contextResponses[0].contextElement.attributes[0].values
-
-					let dadosParaInserir = dadosNaRequisicao;
-					if (maiorTimestamp)
-						dadosParaInserir = dadosParaInserir.filter(d => new Date(d.recvTime) > maiorTimestamp);
+					let dadosParaInserir = dadosNaRequisicao.filter(d => new Date(d.recvTime) > maiorTimestamp);
 
 					if (dadosParaInserir.length > 0) {
 						maiorTimestamp = new Date(dadosParaInserir[dadosParaInserir.length - 1].recvTime);
