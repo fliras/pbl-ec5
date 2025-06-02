@@ -5,20 +5,13 @@
         <th>Ações</th>
         <th>ID</th>
         <th>Nome</th>
-        <th>Última Medição</th>
+        <th>Device ID (Fiware)</th>
     </tr>
 
     @foreach (MedidorViewModel medidor in Model)
     {
         <tr>
             <td>
-                <!--
-                <div class="d-flex justify-content-around">
-                    <a href="/Medidores/Edit?id=@medidor.Id"><img class="icone-crud" src="~/imgs/icone_lapis.png" /></a>
-                    <a href="javascript:deletaMedidor(@medidor.Id)"><img class="icone-crud" src="~/imgs/icone_lixeira.png" /></a>
-                    <a href="/Medidores/View?id=@medidor.Id"><img class="icone-crud" src="~/imgs/icone_olho.png" /></a>
-                </div>
-                -->
                 <ul class="action-menu">
                     <li class="action-btn edit" onclick="window.location.href='/Medidores/Edit?id=@(medidor.Id)'"></li>
                     <li class="action-btn delete" onclick="deletaMedidor(@medidor.Id)"></li>
@@ -27,14 +20,7 @@
             </td>
             <td>@medidor.Id</td>
             <td>@medidor.Nome</td>
-            @if (medidor.DataUltimoRegistro == null)
-            {
-                <td class="font-italic">Sem registros</td>
-            }
-            else
-            {
-                <td>@medidor.DataUltimoRegistro?.ToLocalTime()</td>
-            }
+            <td>@medidor.DeviceIdFiware</td>
         </tr>
     }
 </table>

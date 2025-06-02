@@ -72,9 +72,8 @@ namespace Weathuino.Controllers
         private bool DeletaMedidorNoFiware(MedidorViewModel medidor)
         {
             FiwareClient fClient = new FiwareClient();
-            FiwareOutput fOutput;
+            FiwareOutput fOutput = fClient.DeletaDispositivoNoAgentMQTT(medidor.DeviceIdFiware);
 
-            fOutput = fClient.DeletaDispositivoNoAgentMQTT(medidor.DeviceIdFiware);
             if (!fOutput.Sucesso)
             {
                 ViewBag.AlertaErro = fOutput.MensagemDeErro;
