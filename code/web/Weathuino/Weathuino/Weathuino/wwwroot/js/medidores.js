@@ -7,9 +7,10 @@
 function filtraMedidores() {
 	const id = document.getElementById('id').value;
 	const nome = document.getElementById('nome').value;
+	const deviceID = document.getElementById('deviceID').value;
 	$.ajax({
 		url: "/medidores/ConsultaComFiltros",
-		data: { id, nome },
+		data: { id, nome, deviceID },
 		success: function (dados) {
 			if (dados.erro) {
 				alert(dados.msg);

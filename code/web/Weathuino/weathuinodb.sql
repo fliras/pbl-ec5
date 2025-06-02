@@ -262,7 +262,7 @@ BEGIN
 		WHERE
 			(@id IS NULL OR m.id = @id) AND
 			(@nome IS NULL OR m.nome like '%' + @nome + '%') AND
-			(@deviceID IS NULL OR m.device_id_fiware = @deviceID);
+			(@deviceID IS NULL OR m.device_id_fiware like '%' + @deviceID + '%');
 END
 GO
 
