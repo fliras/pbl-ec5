@@ -121,8 +121,8 @@
 					if (dadosParaInserir.length > 0) {
 						maiorTimestamp = new Date(dadosParaInserir[dadosParaInserir.length - 1].recvTime);
 						insereDadosNoGrafico(dadosParaInserir);
-						temperatureChart.update();
 					}
+					temperatureChart.update();
 				}
 			});
 		}
