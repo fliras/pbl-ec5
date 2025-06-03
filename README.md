@@ -13,7 +13,7 @@ Para a sua elaboração, foram utilizados os seguintes componentes:
 
 Diagrama de funcionamento do sistema:
 
-![Diagrama](docs/assets/PBL Diagrama.png)
+![Diagrama](docs/assets/PBLDiagrama.png)
 
 
 # Kit térmico
