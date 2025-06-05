@@ -98,7 +98,7 @@ namespace Weathuino.Controllers
             if (model.Id <= 0)
                 ModelState.AddModelError("Id", "Id inválido!");
 
-            return true;
+            return ModelState.IsValid;
         }
 
         public IActionResult Edit(int id)
