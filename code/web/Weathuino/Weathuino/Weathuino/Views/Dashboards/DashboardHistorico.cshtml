@@ -39,6 +39,12 @@
 		let pontosAcumulados = [];
 		const annotations = {}
 
+		// monta o arcabouço do gráfico do dashboard
+		function montaChart() {
+			const ctx = document.getElementById('temperatureChart').getContext('2d');
+			temperatureChart = montaInstanciaDeGrafico(ctx, pontosAcumulados, annotations);
+		}
+
 		function montaChart() {
 			const ctx = document.getElementById('temperatureChart').getContext('2d');
 			temperatureChart = montaInstanciaDeGrafico(ctx, pontosAcumulados, annotations);
@@ -49,14 +55,33 @@
 			// limpa todos os pontos
 			pontosAcumulados.splice(0, pontosAcumulados.length);
 
-			const idEstufaSelecionada = document.getElementById('Estufa').value;
-			estufaSelecionada = estufas.find(e => e.Id == idEstufaSelecionada);
-			
+			const idEstufa = document.getElementById('Estufa').value;
 			dataInicio = document.getElementById('dataInicio').value;
 			dataFim = document.getElementById('dataFim').value;
 
+			if (validaFiltrosDashHistorico({ idEstufa, dataInicio, dataFim }))
+				return;
+
+			estufaSelecionada = estufas.find(e => e.Id == idEstufa);
 			montaRangesTemperatura(annotations, estufaSelecionada.TemperaturaMinima, estufaSelecionada.TemperaturaMaxima);
 			updateChart();
+		}
+
+		function validaFiltrosDashHistorico({ idEstufa, dataInicio, dataFim }) {
+			if (idEstufa == 0) {
+				alert('Informe a estufa!');
+				return false;
+			}
+
+			if (!dataInicio) {
+				alert('Informe a data de início!');
+				return false;
+			}
+
+			if (!dataFim) {
+				alert('Informe a data de fim!');
+				return false;
+			}
 		}
 
 		// carrega os dados do Fiware no gráfico
