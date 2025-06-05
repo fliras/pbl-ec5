@@ -53,6 +53,10 @@ h1 {
     margin-bottom: 1em;
 }
 
+.dashboard-card a img {
+    width: 5em;
+}
+
 .dashboard-content {
     padding: 30px;
     width: 55vw;
