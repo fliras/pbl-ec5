@@ -53,33 +53,38 @@ function montaInstanciaDeGrafico(ctx, objPontosAcumulados, objAnnotations) {
 
 // plota duas linhas fixas no gráfico que representam as temperaturas mínimas e máximas da estufa
 function montaRangesTemperatura(objAnnotations, tempMinima, tempMaxima) {
-	objAnnotations.tempMinima = {
-		type: 'line',
-		yMin: tempMinima,
-		yMax: tempMinima, // linha horizontal no Y = 30
-		borderColor: 'red',
-		borderWidth: 2,
-		label: {
-			display: true,
-			content: `Temperatura Min.: ${tempMinima}\u00B0C`,
-			position: 'end',
-			backgroundColor: 'rgba(255,0,0,0.2)',
-			color: 'red',
-			yAdjust: -10
+	if (tempMinima) {
+		objAnnotations.tempMinima = {
+			type: 'line',
+			yMin: tempMinima,
+			yMax: tempMinima, // linha horizontal no Y = 30
+			borderColor: 'red',
+			borderWidth: 2,
+			label: {
+				display: true,
+				content: `Temperatura Min.: ${tempMinima}\u00B0C`,
+				position: 'end',
+				backgroundColor: 'rgba(255,0,0,0.2)',
+				color: 'red',
+				yAdjust: -10
+			}
 		}
 	}
-	objAnnotations.tempMaxima = {
-		type: 'line',
-		yMin: tempMaxima,
-		yMax: tempMaxima, // linha horizontal no Y = 30
-		borderColor: 'red',
-		borderWidth: 2,
-		label: {
-			display: true,
-			content: `Temperatura Max.: ${tempMaxima}\u00B0C`,
-			position: 'end',
-			backgroundColor: 'rgba(255,0,0,0.2)',
-			color: 'red',
+
+	if (tempMaxima) {
+		objAnnotations.tempMaxima = {
+			type: 'line',
+			yMin: tempMaxima,
+			yMax: tempMaxima, // linha horizontal no Y = 30
+			borderColor: 'red',
+			borderWidth: 2,
+			label: {
+				display: true,
+				content: `Temperatura Max.: ${tempMaxima}\u00B0C`,
+				position: 'end',
+				backgroundColor: 'rgba(255,0,0,0.2)',
+				color: 'red',
+			}
 		}
 	}
 }
