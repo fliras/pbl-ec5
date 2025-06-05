@@ -64,9 +64,7 @@ INSERT INTO perfisAcesso (nome) VALUES
 ('ADMIN');
 
 INSERT INTO usuarios (id, nome, email, senha, id_perfil_acesso) VALUES
-(1, 'Alice Admin', 'alice@admin.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 1), -- senha: admin123
-(2, 'Bob', 'bob@user.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2),  -- senha: user123
-(3, 'Carol', 'carol@guest.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2); -- senha: visit123
+(1, 'Carol', 'carol@guest.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2); -- senha: visit123
 
 
 -- PROCEDURES
