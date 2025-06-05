@@ -1,3 +1,6 @@
+var ENDPOINT_DADOS_ATUAIS_DISPOSITIVO = '/Dashboards/DadosAtuaisDispositivo?entityNameID='
+var ENDPOINT_DADOS_HISTORICOS = '/Dashboards/DadosHistoricosDispositivo?entityNameID='
+
 function montaInstanciaDeGrafico(ctx, objPontosAcumulados, objAnnotations) {
 	return new Chart(ctx, {
 		type: 'line',
@@ -81,6 +84,7 @@ function montaRangesTemperatura(objAnnotations, tempMinima, tempMaxima) {
 	}
 }
 
+// plota no gráfico uma linha fixa que representa a temperatura do SetPoint
 function montaAnnotationDoSetPoint(valorSetPoint) {
 	return {
 		type: 'line',
@@ -97,6 +101,20 @@ function montaAnnotationDoSetPoint(valorSetPoint) {
 			yAdjust: -10
 		}
 	}
+}
+
+// função para obter a temperatura instantânea de um dispositivo no Fiware
+function obtemTemperaturaAtualDoDispositivo(idDispositivo) {
+	$.ajax({
+		url: `${ENDPOINT_DADOS_ATUAIS_DISPOSITIVO}${idDispositivo}`,
+		method: 'GET',
+		success: function (data) {
+			const dadosTemperatura = JSON.parse(data).temperatura;
+			const temperaturaAtual = dadosTemperatura.value;
+			const dataMedicao = new Date(dadosTemperatura.metadata.TimeInstant.value);
+			document.getElementById('temperaturaAtual').innerHTML = `Ultima Temperatura Registrada: ${temperaturaAtual}\u00B0C (${formataTimestamp(dataMedicao)})`;
+		}
+	});
 }
 
 function formataTimestamp(datahora) {

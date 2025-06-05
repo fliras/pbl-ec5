@@ -59,7 +59,7 @@
 			// limpa todos os pontos acumulados até então
 			pontosAcumulados.splice(0, pontosAcumulados.length);
 
-			// reseta o referencial de data e datahora inicial
+			// reseta o marco zero de data e datahora inicial
 			maiorTimestamp = new Date();
 
 			// limpa o texto que indica a temperatura instantânea da estufa
@@ -72,18 +72,18 @@
 			montaRangesTemperatura(annotations, estufaSelecionada.TemperaturaMinima, estufaSelecionada.TemperaturaMaxima);
 
 			updateChart();
-			obtemTemperaturaAtual();
+			obtemTemperaturaAtualDoDispositivo(estufaSelecionada.Medidor.Id);
 			
 			intervalGrafico = setInterval(() => {
 				updateChart();
-				obtemTemperaturaAtual();
+				obtemTemperaturaAtualDoDispositivo(estufaSelecionada.Medidor.Id);
 			}, 2000);
 		}
 
 		// obtem os dados de temperatura da estufa no Fiware e atualiza o gráfico
 		function updateChart() {
 			$.ajax({
-				url: `@(Url.Action("DadosHistoricosDispositivo", "Dashboards"))?entityNameID=${estufaSelecionada.Medidor.Id}`,
+				url: `${ENDPOINT_DADOS_HISTORICOS}${estufaSelecionada.Medidor.Id}`,
 				method: 'GET',
 				success: function (data) {
 					// carrega os dados obtidos e seleciona apenas os que ainda não foram plotados no gráfico
@@ -124,20 +124,6 @@
 				const qtdeParaLimpar = pontosAcumulados.length - qtdeMaximaDePontos;
 				pontosAcumulados.splice(0, qtdeParaLimpar);
 			}
-		}
-
-		//obtém os dados instantâneos de temperatura da estufas no Fiware
-		function obtemTemperaturaAtual() {
-			$.ajax({
-				url: `@(Url.Action("DadosAtuaisDispositivo", "Dashboards"))?entityNameID=${estufaSelecionada.Medidor.Id}`,
-				method: 'GET',
-				success: function (data) {
-					const dadosTemperatura = JSON.parse(data).temperatura;
-					const temperaturaAtual = dadosTemperatura.value;
-					const dataMedicao = new Date(dadosTemperatura.metadata.TimeInstant.value);
-					document.getElementById('temperaturaAtual').innerHTML = `Última Temperatura Registrada: ${temperaturaAtual}°C (${formataTimestamp(dataMedicao)})`;
-				}
-			});
 		}
 
 		document.getElementById('btnSetPoint').addEventListener('click', toggleSetPoint);
