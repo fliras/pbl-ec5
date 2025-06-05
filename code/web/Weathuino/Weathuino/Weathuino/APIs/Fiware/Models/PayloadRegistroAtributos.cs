@@ -3,10 +3,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Weathuino.APIs.Fiware.Payloads
 {
+    // Classe utilizada para montar o JSON enviado via POST para registrar os atributos monitorados de um dispositivo no Fiware
     public class PayloadRegistroAtributos
     {
         public int EntityNameID { get; set; }
 
+        // Recebe os dados do dispositivo e retorna o JSON serializado
         public string Monta()
         {
             var payload = new JObject

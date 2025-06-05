@@ -3,11 +3,13 @@ using Newtonsoft.Json.Linq;
 
 namespace Weathuino.APIs.Fiware.Payloads
 {
+    // Model que monta o JSON enviado via POST na requisição do Fiware para cadastrar dispositivos
     public class PayloadNovoIoT
     {
         public string DeviceID { get; set; }
         public int EntityNameID { get; set; }
 
+        // Monta um objeto JSON com base nos dados passados e retorna o JSON serializado
         public string Monta()
         {
             JObject payload = new JObject
