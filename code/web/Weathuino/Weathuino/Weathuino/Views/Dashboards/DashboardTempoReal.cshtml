@@ -52,6 +52,15 @@
 
 		// inicia o funcionamento do gráfico após seleção da estufa
 		function iniciaChart() {
+			// carrega os dados da estufa selecionada
+			const idEstufaSelecionada = document.getElementById('Estufa').value;
+			estufaSelecionada = estufas.find(e => e.Id == idEstufaSelecionada);
+
+			if (idEstufaSelecionada == 0) {
+				alert('Selecione uma estufa!');
+				return;
+			}
+
 			// se o gráfico já foi iniciado antes, o interval deve ser resetado
 			if (intervalGrafico)
 				clearInterval(intervalGrafico);
@@ -64,10 +73,6 @@
 
 			// limpa o texto que indica a temperatura instantânea da estufa
 			document.getElementById('temperaturaAtual').innerHTML = '';
-
-			// carrega os dados da estufa selecionada
-			const idEstufaSelecionada = document.getElementById('Estufa').value;
-			estufaSelecionada = estufas.find(e => e.Id == idEstufaSelecionada);
 
 			montaRangesTemperatura(annotations, estufaSelecionada.TemperaturaMinima, estufaSelecionada.TemperaturaMaxima);
 
