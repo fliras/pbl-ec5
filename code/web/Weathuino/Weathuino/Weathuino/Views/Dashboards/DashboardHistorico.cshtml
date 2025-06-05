@@ -26,68 +26,25 @@
 <canvas id="temperatureChart" width="1000" height="450" style="background-color: white;"></canvas>
 
 @section Scripts {
+	<script src="~/js/dashboard.js"></script>
 	<script>
 		const estufas = @Html.Raw(ViewBag.JsonEstufas);
 		let estufaSelecionada;
 		let dataInicio;
 		let dataFim;
 
-		let temperatureChart;
+		let temperatureChart; // canvas do gráfico
+
+		// pontos no gráfico
 		let pontosAcumulados = [];
 		const annotations = {}
 
 		function montaChart() {
 			const ctx = document.getElementById('temperatureChart').getContext('2d');
-
-			temperatureChart = new Chart(ctx, {
-				type: 'line',
-				data: {
-					datasets: [
-						{
-							label: 'Temperatura (°C)',
-							data: pontosAcumulados,
-							borderColor: 'rgba(75, 192, 192, 1)',
-							backgroundColor: 'rgba(75, 192, 192, 0.2)',
-							tension: 0.1
-						},
-					]
-				},
-				options: {
-					scales: {
-						x: {
-							type: 'time',
-							time: {
-								tooltipFormat: 'dd/MM/yyyy HH:mm:ss',
-								displayFormats: {
-									second: 'dd/MM/yyyy HH:mm:ss',
-									minute: 'dd/MM/yyyy HH:mm:ss',
-									hour: 'dd/MM/yyyy HH:mm:ss'
-								}
-							},
-							title: {
-								display: true,
-								text: 'Data e Hora'
-							}
-						},
-						y: {
-							title: {
-								display: true,
-								text: 'Temperatura (°C)'
-							}
-						}
-					},
-					plugins: {
-						annotation: {
-							annotations
-						},
-						legend: {
-							display: true
-						}
-					},
-				}
-			});
+			temperatureChart = montaInstanciaDeGrafico(ctx, pontosAcumulados, annotations);
 		}
 
+		// iniciliza a montagem dos dados no gráfico
 		function iniciaChart() {
 			// limpa todos os pontos
 			pontosAcumulados.splice(0, pontosAcumulados.length);
@@ -98,10 +55,11 @@
 			dataInicio = document.getElementById('dataInicio').value;
 			dataFim = document.getElementById('dataFim').value;
 
-			montaRangesTemperatura(estufaSelecionada.TemperaturaMinima, estufaSelecionada.TemperaturaMaxima);
+			montaRangesTemperatura(annotations, estufaSelecionada.TemperaturaMinima, estufaSelecionada.TemperaturaMaxima);
 			updateChart();
 		}
 
+		// carrega os dados do Fiware no gráfico
 		function updateChart() {
 			$.ajax({
 				url: `@(Url.Action("DadosHistoricosDispositivo", "Dashboards"))?entityNameID=${estufaSelecionada.Medidor.Id}&dataInicio=${dataInicio}&dataFim=${dataFim}`,
@@ -114,38 +72,6 @@
 			});
 		}
 
-		function montaRangesTemperatura(tempMinima, tempMaxima) {
-			annotations.tempMinima = {
-				type: 'line',
-				yMin: tempMinima,
-				yMax: tempMinima, // linha horizontal no Y = 30
-				borderColor: 'red',
-				borderWidth: 2,
-				label: {
-					display: true,
-					content: `Temperatura Mín.: ${tempMinima}°C`,
-					position: 'end',
-					backgroundColor: 'rgba(255,0,0,0.2)',
-					color: 'red',
-					yAdjust: -10
-				}
-			}
-			annotations.tempMaxima = {
-				type: 'line',
-				yMin: tempMaxima,
-				yMax: tempMaxima, // linha horizontal no Y = 30
-				borderColor: 'red',
-				borderWidth: 2,
-				label: {
-					display: true,
-					content: `Temperatura Máx.: ${tempMaxima}°C`,
-					position: 'end',
-					backgroundColor: 'rgba(255,0,0,0.2)',
-					color: 'red',
-				}
-			}
-		}
-
 		function insereDadosNoGrafico(dados) {
 			pontosAcumulados.splice(0, pontosAcumulados.length);
 			dados.forEach(d => {
@@ -154,10 +80,6 @@
 					y: d.attrValue
 				});
 			});
-		}
-
-		window.onload = () => {
-			montaChart();
 		}
 	</script>
 }
