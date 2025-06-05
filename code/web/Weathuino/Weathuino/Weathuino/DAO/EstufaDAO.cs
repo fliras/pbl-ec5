@@ -6,6 +6,9 @@ using Weathuino.Models;
 
 namespace Weathuino.DAO
 {
+    /// <summary>
+    /// DAO para gerenciamento de estufas no BD
+    /// </summary>
     public class EstufaDAO : PadraoDAO<EstufaViewModel>
     {
         protected override SqlParameter[] CriaParametros(EstufaViewModel estufa)

@@ -3,6 +3,9 @@ using System.IO;
 
 namespace Weathuino.Utils
 {
+    /// <summary>
+    /// Métodos utilitários para manipular arquivos
+    /// </summary>
     public class FileUtils
     {
         public static byte[] ConverteArquivoEmArrayDeBytes(IFormFile arquivo)

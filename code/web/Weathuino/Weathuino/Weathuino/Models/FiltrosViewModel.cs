@@ -1,5 +1,8 @@
 ﻿namespace Weathuino.Models
 {
+    /// <summary>
+    /// Utilizada para transportar parâmetros de filtro para buscar registros no BD por meio das DAOs
+    /// </summary>
     public class FiltrosViewModel
     {
         public int? Id { get; set; }

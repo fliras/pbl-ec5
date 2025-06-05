@@ -8,6 +8,9 @@ using Weathuino.Utils;
 
 namespace Weathuino.DAO
 {
+    /// <summary>
+    /// Gerencia as operações com usuários no BD
+    /// </summary>
     public class UsuarioDAO : PadraoDAO<UsuarioViewModel>
     {
         protected override SqlParameter[] CriaParametros(UsuarioViewModel usuario)
@@ -22,17 +25,19 @@ namespace Weathuino.DAO
             };
         }
 
+        /// <summary>
+        /// Realiza valida os dados de login do usuário e retorna seus dados de sessão.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="senha"></param>
+        /// <returns></returns>
         public SessaoViewModel RealizaLogin(string email, string senha)
         {
-            FiltrosViewModel filtroEmail = new FiltrosViewModel { Email = email };
-            List<UsuarioViewModel> usuariosFiltrados = ConsultaComFiltros(filtroEmail);
-            if (usuariosFiltrados.Count == 0)
-                return null;
-
             UsuarioViewModel usuarioDoEmail = ObtemPorEmail(email);
             if (usuarioDoEmail == null)
                 return null;
 
+            // valida a senha comparando-a com o hash armazenado no BD
             bool senhaValida = BCryptUtils.ValidaHashBcrypt(senha, usuarioDoEmail.Senha);
             if (!senhaValida)
                 return null;
@@ -44,6 +49,11 @@ namespace Weathuino.DAO
             };
         }
 
+        /// <summary>
+        /// Obtem um usuário com base no seu e-mail
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public UsuarioViewModel ObtemPorEmail(string email)
         {
             FiltrosViewModel filtroEmail = new FiltrosViewModel { Email = email };

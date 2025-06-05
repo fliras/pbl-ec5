@@ -3,6 +3,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Weathuino.Utils
 {
+    /// <summary>
+    /// Métodos utilitários para operações com JSON
+    /// </summary>
     public class JSONUtils
     {
         public static string ConverteObjetoParaStringJSON(object obj)

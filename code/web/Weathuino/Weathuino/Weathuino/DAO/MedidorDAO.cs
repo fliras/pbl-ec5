@@ -6,8 +6,16 @@ using Weathuino.Models;
 
 namespace Weathuino.DAO
 {
+    /// <summary>
+    /// Gerencia operações com medidores no BD
+    /// </summary>
     public class MedidorDAO : PadraoDAO<MedidorViewModel>
     {
+        /// <summary>
+        /// Verifica se um medidor está associado a uma estufa
+        /// </summary>
+        /// <param name="id">id do medidor</param>
+        /// <returns></returns>
         public bool VerificaSeMedidorEstaEmUso(int id)
         {
             SqlParameter[] parametros = new SqlParameter[] { new SqlParameter("id", id) };
@@ -41,9 +49,14 @@ namespace Weathuino.DAO
             return medidor;
         }
 
+        /// <summary>
+        /// Método para pesquisar um medidor pelo seu ID no Fiware
+        /// </summary>
+        /// <param name="deviceID">Device ID cadastrado no Fiware</param>
+        /// <returns></returns>
         public MedidorViewModel ObtemPorDeviceID(string deviceID)
         {
-            FiltrosViewModel filtroDeviceID = new FiltrosViewModel { DeviceID = deviceID };
+            FiltrosViewModel filtroDeviceID = new FiltrosViewModel { DeviceID = deviceID }; // Prepara o model de filtro
             List<MedidorViewModel> medidoresFiltrados = ConsultaComFiltros(filtroDeviceID);
             if (medidoresFiltrados.Count == 0)
                 return null;
