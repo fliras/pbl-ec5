@@ -112,7 +112,7 @@
 
 		function updateChart() {
 			$.ajax({
-				url: `@(Url.Action("ProxyToExternal", "Dashboards"))?entityNameID=${estufaSelecionada.Medidor.Id}`,
+				url: `@(Url.Action("DadosHistoricosDispositivo", "Dashboards"))?entityNameID=${estufaSelecionada.Medidor.Id}`,
 				method: 'GET',
 				success: function (data) {
 					const dadosNaRequisicao = JSON.parse(data).contextResponses[0].contextElement.attributes[0].values

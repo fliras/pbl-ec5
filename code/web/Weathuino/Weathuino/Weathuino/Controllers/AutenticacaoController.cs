@@ -8,10 +8,19 @@ using Weathuino.Utils;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Gerenciamento da autenticação do sistema
+    /// </summary>
     public class AutenticacaoController : PadraoController
     {
         private readonly UsuarioDAO _usuarioDAO = new UsuarioDAO();
 
+        /// <summary>
+        /// Realiza a autenticação do usuário por meio de seu login e senha
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="senha"></param>
+        /// <returns></returns>
         public IActionResult Login(string email, string senha)
         {
             try
@@ -22,6 +31,7 @@ namespace Weathuino.Controllers
                     return View("Index");
                 }
 
+                // realiza o login e caso não consiga os dados de sessão, os dados de login estão incorretos
                 SessaoViewModel sessao = _usuarioDAO.RealizaLogin(email, senha);
                 if (sessao == null)
                 {
@@ -38,6 +48,10 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Registra os dados de sessão do usuário após o login
+        /// </summary>
+        /// <param name="dadosSessao"></param>
         private void RegistraSessao(SessaoViewModel dadosSessao)
         {
             string dadosSessaoEmJSON = JSONUtils.ConverteObjetoParaStringJSON(dadosSessao);
@@ -45,6 +59,10 @@ namespace Weathuino.Controllers
             HttpContext.Session.SetString("Logado", "true");
         }
 
+        /// <summary>
+        /// Finaliza a sessão do usuário e volta para a tela de login
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Logoff()
         {
             try

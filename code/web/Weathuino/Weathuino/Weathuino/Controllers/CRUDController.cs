@@ -7,13 +7,21 @@ using Weathuino.Models;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Classe base para as Controllers de CRUD do sistema
+    /// </summary>
+    /// <typeparam name="T">Tipo genérico que representa as models associadas a cada controller</typeparam>
     public abstract class CRUDController<T> : PadraoController where T : PadraoViewModel
     {
         protected PadraoDAO<T> DAO { get; set; }
-        protected bool GeraProximoId { get; set; } = true;
-        protected string NomeViewIndex { get; set; } = "index";
-        protected string NomeViewForm { get; set; } = "form";
+        protected bool GeraProximoId { get; set; } = true; // Indica se a Controller deve gerenciar os IDs dos novos registros
+        protected string NomeViewIndex { get; set; } = "index"; // Indica nome da View inicial da controller
+        protected string NomeViewForm { get; set; } = "form"; // Nome da View de formulário da controller
 
+        /// <summary>
+        /// Monta a página principal da Controller, listando os dados
+        /// </summary>
+        /// <returns></returns>
         public override IActionResult Index()
         {
             try
@@ -27,6 +35,10 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Realiza a lógica base de criação do CRUD
+        /// </summary>
+        /// <returns></returns>
         public virtual IActionResult Create()
         {
             try
@@ -42,16 +54,28 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Prepara controles que devem ser carregados para o funcionamento da Controller. Pode ser modificado
+        /// </summary>
+        /// <param name="Operacao">Tipo de operação que o CRUD realizará na requisição</param>
+        /// <param name="model">model com os dados da requisição</param>
         protected virtual void PreencheDadosParaView(ModosOperacao Operacao, T model)
         {
             if (GeraProximoId && Operacao == ModosOperacao.INCLUSAO)
                 model.Id = DAO.GeraProximoID();
         }
 
+        /// <summary>
+        /// Implementa lógica base de salvamento de registros, tanto criação quanto edição.
+        /// </summary>
+        /// <param name="model">dados da requisição</param>
+        /// <param name="Operacao">tipo de operação realizada</param>
+        /// <returns></returns>
         public virtual IActionResult Save(T model, ModosOperacao Operacao)
         {
             try
             {
+                // Se os dados são inválidos, a requisição é interrompida
                 if (!ValidaDados(model, Operacao))
                 {
                     ViewBag.Operacao = Operacao;
@@ -59,6 +83,7 @@ namespace Weathuino.Controllers
                     return View(NomeViewForm, model);
                 }
 
+                // Executa a lógica de "pré-save" e obtém seu status
                 bool beforeSaveComSucesso = ExecuteBeforeSave(model, Operacao);
                 if (!beforeSaveComSucesso)
                 {
@@ -80,17 +105,28 @@ namespace Weathuino.Controllers
             }
         }
 
-        // As classes filhas implementam ações antes do Save caso aplicável.
+        /// <summary>
+        /// Utilizado para implementar instruções que são executadas antes do método de Save
+        /// </summary>
+        /// <param name="model">dados da requisição</param>
+        /// <param name="operacao">tipo de operação</param>
+        /// <returns></returns>
         protected virtual bool ExecuteBeforeSave(T model, ModosOperacao operacao)
         {
             return true;
         }
 
-        // Atualmente não há validações comuns para todas as controllers, apenas a rotina de limpar o ModelState.
+        /// <summary>
+        /// Implementa regras de validação da requisição
+        /// </summary>
+        /// <param name="model">dados para validar</param>
+        /// <param name="operacao">tipo de operação</param>
+        /// <returns></returns>
         protected virtual bool ValidaDados(T model, ModosOperacao operacao)
         {
-            ModelState.Clear();
+            ModelState.Clear(); // inicia limpando o ModelState
 
+            // Valida o gerenciamento de IDs dos CRUDs
             if (operacao == ModosOperacao.INCLUSAO && DAO.ObtemPorID(model.Id) != null)
                 ModelState.AddModelError("Id", "Código já está em uso!");
             if (operacao == ModosOperacao.ALTERACAO && DAO.ObtemPorID(model.Id) == null)
@@ -101,6 +137,11 @@ namespace Weathuino.Controllers
             return ModelState.IsValid;
         }
 
+        /// <summary>
+        /// Implementa a lógica base para edição de registros
+        /// </summary>
+        /// <param name="id">ID do registro editado</param>
+        /// <returns></returns>
         public IActionResult Edit(int id)
         {
             try
@@ -121,6 +162,11 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Implementa lógica base para exibir os dados de um registro em tela
+        /// </summary>
+        /// <param name="id">id do registro</param>
+        /// <returns></returns>
         public IActionResult View(int id)
         {
             try
@@ -141,6 +187,11 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Implementa a lógica base para exclusão de registros
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public virtual IActionResult Delete(int id)
         {
             try
@@ -155,6 +206,11 @@ namespace Weathuino.Controllers
 
         }
 
+        /// <summary>
+        /// Implementa regra para buscar registros com base em filtros especificados em tela
+        /// </summary>
+        /// <param name="filtros">Model com os campos que devem ser filtrados no banco de dados</param>
+        /// <returns></returns>
         public IActionResult ConsultaComFiltros(FiltrosViewModel filtros)
         {
             try

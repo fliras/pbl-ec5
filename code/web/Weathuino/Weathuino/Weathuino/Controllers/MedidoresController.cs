@@ -8,22 +8,33 @@ using Weathuino.APIs.Fiware.Models;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Gerencia o CRUD de medidores
+    /// </summary>
     public class MedidoresController : CRUDController<MedidorViewModel>
     {
         public MedidoresController()
         {
             DAO = new MedidorDAO();
-            AcessoExigido = PerfisAcesso.COMUM;
+            AcessoExigido = PerfisAcesso.COMUM; // ao menos usuários logados devem acessar
         }
 
+        /// <summary>
+        /// Implementa as regras executadas antes do Save dos dados, em especial o registro do dispositivo no Fiware
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="operacao"></param>
+        /// <returns></returns>
         protected override bool ExecuteBeforeSave(MedidorViewModel model, ModosOperacao operacao)
         {
+            // apenas em inclusões esse método deve seguir
             if (operacao != ModosOperacao.INCLUSAO)
                 return true;
 
             FiwareClient fClient = new FiwareClient();
             FiwareOutput fOutput;
 
+            // Caso alguma requisição ao Fiware dê errado, um erro em tela é exibido
             fOutput = fClient.CriaDispositivo(model.DeviceIdFiware, model.Id);
             if (!fOutput.Sucesso)
             {
@@ -41,6 +52,11 @@ namespace Weathuino.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Implementa uma regra de Delete customizada, por conta das interações com o Fiware
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public override IActionResult Delete(int id)
         {
             try
@@ -69,6 +85,11 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Realiza a exclusão de dispositivos no Fiware
+        /// </summary>
+        /// <param name="medidor"></param>
+        /// <returns></returns>
         private bool DeletaMedidorNoFiware(MedidorViewModel medidor)
         {
             FiwareClient fClient = new FiwareClient();
@@ -83,6 +104,12 @@ namespace Weathuino.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Implementa regras de validação customizadas para os medidores
+        /// </summary>
+        /// <param name="medidor"></param>
+        /// <param name="operacao"></param>
+        /// <returns></returns>
         protected override bool ValidaDados(MedidorViewModel medidor, ModosOperacao operacao)
         {
             bool validacaoBaseOK = base.ValidaDados(medidor, operacao);

@@ -1,20 +1,26 @@
 ﻿using Weathuino.DAO;
 using Weathuino.Models;
 using Weathuino.Enums;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Gerencia o CRUD de usuários no sistema
+    /// </summary>
     public class UsuariosController : CRUDController<UsuarioViewModel>
     {
         public UsuariosController()
         {
             DAO = new UsuarioDAO();
-            AcessoExigido = PerfisAcesso.ADMIN;
+            AcessoExigido = PerfisAcesso.ADMIN; // Apenas administradores podem gerenciar usuários
         }
 
+        /// <summary>
+        /// Validação dos dados de usuário
+        /// </summary>
+        /// <param name="usuario"></param>
+        /// <param name="operacao"></param>
+        /// <returns></returns>
         protected override bool ValidaDados(UsuarioViewModel usuario, ModosOperacao operacao)
         {
             bool validacaoBaseOK = base.ValidaDados(usuario, operacao);

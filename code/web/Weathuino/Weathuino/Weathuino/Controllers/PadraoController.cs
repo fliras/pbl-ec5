@@ -9,10 +9,17 @@ using Weathuino.Utils;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Base para criação de controllers no sistema
+    /// </summary>
     public class PadraoController : Controller
     {
-        protected PerfisAcesso? AcessoExigido { get; set; }
+        protected PerfisAcesso? AcessoExigido { get; set; } // Perfil de acesso mínimo de cada controller no sistema
 
+        /// <summary>
+        /// Carregamento base da página principal da controller
+        /// </summary>
+        /// <returns></returns>
         public virtual IActionResult Index()
         {
             try
@@ -25,6 +32,10 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Método para executar regras logo antes do arranque de cada controller
+        /// </summary>
+        /// <param name="context"></param>
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (AcessoExigido == null)
@@ -49,6 +60,11 @@ namespace Weathuino.Controllers
             }
         }
 
+        /// <summary>
+        /// Carrega os dados da sessão do usuário logado no sistema
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         private static SessaoViewModel ObtemDadosDaSessao(ISession session)
         {
             string dadosEmJSON = session.GetString("DadosSessao");

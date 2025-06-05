@@ -3,19 +3,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Weathuino.DAO;
 using Weathuino.Models;
 using Weathuino.Enums;
-using System.Reflection;
 using Weathuino.Utils;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Gerencia o CRUD de estufas
+    /// </summary>
     public class EstufasController : CRUDController<EstufaViewModel>
     {
         public EstufasController()
         {
             DAO = new EstufaDAO();
-            AcessoExigido = PerfisAcesso.COMUM;
+            AcessoExigido = PerfisAcesso.COMUM; // ao menos usuários logados devem acessar
         }
 
+        /// <summary>
+        /// Validação dos dados de estufa
+        /// </summary>
+        /// <param name="estufa"></param>
+        /// <param name="operacao"></param>
+        /// <returns></returns>
         protected override bool ValidaDados(EstufaViewModel estufa, ModosOperacao operacao)
         {
             bool validacaoBaseOK = base.ValidaDados(estufa, operacao);
@@ -59,6 +67,9 @@ namespace Weathuino.Controllers
             PreparaComboMedidores();
         }
 
+        /// <summary>
+        /// Carrega o combobox de medidores que podem ser associados as estufas
+        /// </summary>
         private void PreparaComboMedidores()
         {
             MedidorDAO dao = new MedidorDAO();

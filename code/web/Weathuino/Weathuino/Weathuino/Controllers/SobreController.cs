@@ -6,11 +6,14 @@ using Weathuino.Enums;
 
 namespace Weathuino.Controllers
 {
+    /// <summary>
+    /// Gerencia a tela de Sobre
+    /// </summary>
     public class SobreController : PadraoController
     {
         public SobreController()
         {
-            AcessoExigido = PerfisAcesso.COMUM;
+            AcessoExigido = PerfisAcesso.COMUM; // Apenas usuários logados podem acessar
         }
 
         private List<IntegranteViewModel> _integrantes = new List<IntegranteViewModel>()
