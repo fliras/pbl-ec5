@@ -68,18 +68,6 @@ INSERT INTO usuarios (id, nome, email, senha, id_perfil_acesso) VALUES
 (2, 'Bob', 'bob@user.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2),  -- senha: user123
 (3, 'Carol', 'carol@guest.com', '$2a$11$ZRgwlDqXssWQT3vwlQmdyO6R2yv1xpCPgqJvqDO/8GUAXFiF.uZAC', 2); -- senha: visit123
 
-INSERT INTO medidores (id, device_id_fiware, nome, data_ultimo_registro) VALUES
-(1, 'senshtl1', 'Medidor Alpha', CURRENT_TIMESTAMP),
-(2, 'senshtl2', 'Medidor Beta', NULL),
-(3, 'senshtl3', 'Medidor Gama', '2025-04-06 08:45:19');
-
-INSERT INTO estufas (id, nome, descricao, temperatura_min, temperatura_max, imagem, id_medidor) VALUES
-(1, 'Estufa Norte', 'Estufa principal da unidade norte', 18.00, 30.00, NULL, 1),
-(2, 'Estufa Sul', 'Controle de temperatura média', 20.00, 28.00, NULL, 2),
-(3, 'Estufa Experimental', 'Ambiente para testes e simulações', 15.50, 32.00, NULL, 3);
-
-
-
 
 -- PROCEDURES
 -------------------------------------------------
